@@ -1,19 +1,14 @@
 "use client";
 
+import TransactionModal from "@/components/TransactionModal";
+import {
+  Transaction,
+  TransactionForm,
+  TransactionType,
+} from "@/types/transaction";
 import { useState } from "react";
 
-type TransactionType = "income" | "expense";
-
-interface Transaction {
-  id: number;
-  type: TransactionType;
-  category: string;
-  note: string;
-  amount: number;
-  date: string;
-}
-
-const mockTransactions: Transaction[] = [
+let mockTransactions: Transaction[] = [
   {
     id: 1,
     type: "expense",
@@ -59,22 +54,42 @@ const mockTransactions: Transaction[] = [
 const categories = ["全部", "餐飲", "交通", "娛樂", "薪資", "其他"];
 
 export default function TransactionsPage() {
+  const [modalOpen, setModalOpen] = useState(false);
   const [filter, setFilter] = useState<TransactionType | "all">("all");
   const [categoryFilter, setCategoryFilter] = useState("全部");
+  const [transactions, setTransactions] =
+    useState<Transaction[]>(mockTransactions);
 
-  const filtered = mockTransactions.filter((t) => {
+  const filtered = transactions.filter((t) => {
     const matchType = filter === "all" || t.type === filter;
     const matchCategory =
       categoryFilter === "全部" || t.category === categoryFilter;
     return matchType && matchCategory;
   });
 
+  function addTransaction(data: TransactionForm) {
+    setTransactions((prev) => [
+      ...prev,
+      {
+        id: Math.max(...prev.map((r) => r.id)) + 1,
+        type: data.type,
+        category: data.category,
+        note: data.note,
+        amount: Number(data.amount),
+        date: data.date,
+      },
+    ]);
+  }
+
   return (
     <div className="max-w-5xl mx-auto px-4 py-8 flex flex-col gap-6">
       {/* 標題 + 新增按鈕 */}
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-bold">記帳紀錄</h1>
-        <button className="bg-primary text-primary-foreground text-sm px-4 py-2 rounded">
+        <button
+          onClick={() => setModalOpen(true)}
+          className="bg-primary text-primary-foreground text-sm px-4 py-2 rounded"
+        >
           + 新增
         </button>
       </div>
@@ -143,6 +158,11 @@ export default function TransactionsPage() {
           ))
         )}
       </div>
+      <TransactionModal
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        onSubmit={(data) => addTransaction(data)}
+      />
     </div>
   );
 }
