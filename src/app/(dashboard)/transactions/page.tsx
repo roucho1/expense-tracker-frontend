@@ -8,7 +8,16 @@ import {
 } from "@/types/transaction";
 import { useState } from "react";
 
-let mockTransactions: Transaction[] = [
+// 新增預設值
+const emptyForm: TransactionForm = {
+  type: "expense",
+  category: "餐飲",
+  note: "",
+  amount: "",
+  date: new Date().toISOString().split("T")[0],
+};
+
+const mockTransactions: Transaction[] = [
   {
     id: 1,
     type: "expense",
@@ -57,6 +66,8 @@ export default function TransactionsPage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [filter, setFilter] = useState<TransactionType | "all">("all");
   const [categoryFilter, setCategoryFilter] = useState("全部");
+  const [editingTransaction, setEditingTransaction] =
+    useState<Transaction | null>(null);
   const [transactions, setTransactions] =
     useState<Transaction[]>(mockTransactions);
 
@@ -79,6 +90,27 @@ export default function TransactionsPage() {
         date: data.date,
       },
     ]);
+  }
+
+  function updateTransaction(id: number, data: TransactionForm) {
+    setTransactions((prev) =>
+      prev.map((res) =>
+        res.id === id
+          ? {
+              ...res,
+              type: data.type,
+              category: data.category,
+              note: data.note,
+              amount: Number(data.amount),
+              date: data.date,
+            }
+          : res,
+      ),
+    );
+  }
+
+  function deleteTransaction(id: number) {
+    setTransactions((prev) => prev.filter((r) => r.id !== id));
   }
 
   return (
@@ -147,10 +179,16 @@ export default function TransactionsPage() {
                   {t.type === "income" ? "+" : "-"}
                   {t.amount.toLocaleString()}
                 </span>
-                <button className="text-xs text-muted-foreground hover:text-foreground">
+                <button
+                  onClick={() => setEditingTransaction(t)}
+                  className="text-xs text-muted-foreground hover:text-foreground"
+                >
                   編輯
                 </button>
-                <button className="text-xs text-red-400 hover:text-red-600">
+                <button
+                  onClick={() => deleteTransaction(t.id)}
+                  className="text-xs text-red-400 hover:text-red-600"
+                >
                   刪除
                 </button>
               </div>
@@ -159,9 +197,31 @@ export default function TransactionsPage() {
         )}
       </div>
       <TransactionModal
-        open={modalOpen}
-        onClose={() => setModalOpen(false)}
-        onSubmit={(data) => addTransaction(data)}
+        open={modalOpen || editingTransaction !== null}
+        onClose={() => {
+          setModalOpen(false);
+          setEditingTransaction(null);
+        }}
+        onSubmit={(data) => {
+          if (editingTransaction) {
+            updateTransaction(editingTransaction.id, data);
+          } else {
+            addTransaction(data);
+          }
+          setModalOpen(false);
+          setEditingTransaction(null);
+        }}
+        initialData={
+          editingTransaction
+            ? {
+                type: editingTransaction.type,
+                category: editingTransaction.category,
+                note: editingTransaction.note,
+                amount: String(editingTransaction.amount),
+                date: editingTransaction.date,
+              }
+            : emptyForm
+        }
       />
     </div>
   );

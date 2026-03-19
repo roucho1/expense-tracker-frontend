@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -16,16 +16,19 @@ interface Props {
   open: boolean;
   onClose: () => void;
   onSubmit: (data: TransactionForm) => void;
+  initialData: TransactionForm;
 }
 
-export default function TransactionModal({ open, onClose, onSubmit }: Props) {
-  const [form, setForm] = useState<TransactionForm>({
-    type: "expense",
-    category: "餐飲",
-    note: "",
-    amount: "",
-    date: new Date().toISOString().split("T")[0],
-  });
+export default function TransactionModal({
+  open,
+  onClose,
+  onSubmit,
+  initialData,
+}: Props) {
+  const [form, setForm] = useState<TransactionForm>(initialData);
+  useEffect(() => {
+    setForm(initialData);
+  }, [initialData]);
 
   function handleChange(field: keyof TransactionForm, value: string) {
     setForm((prev) => ({ ...prev, [field]: value }));
