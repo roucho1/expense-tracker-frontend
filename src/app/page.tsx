@@ -1,5 +1,6 @@
 "use client";
 
+import { mockTransactions } from "@/lib/mockData";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -12,49 +13,6 @@ const mockStats = {
   週: { income: 3500, expense: 2100, balance: 1400 },
   月: { income: 15000, expense: 9800, balance: 5200 },
 };
-
-const mockTransactions = [
-  {
-    id: 1,
-    type: "expense",
-    category: "餐飲",
-    note: "午餐",
-    amount: 120,
-    date: "2026-03-18",
-  },
-  {
-    id: 2,
-    type: "income",
-    category: "薪資",
-    note: "三月薪水",
-    amount: 15000,
-    date: "2026-03-17",
-  },
-  {
-    id: 3,
-    type: "expense",
-    category: "交通",
-    note: "捷運",
-    amount: 30,
-    date: "2026-03-17",
-  },
-  {
-    id: 4,
-    type: "expense",
-    category: "娛樂",
-    note: "電影",
-    amount: 280,
-    date: "2026-03-16",
-  },
-  {
-    id: 5,
-    type: "expense",
-    category: "餐飲",
-    note: "晚餐",
-    amount: 95,
-    date: "2026-03-16",
-  },
-];
 
 export default function HomePage() {
   const [period, setPeriod] = useState<Period>("月");

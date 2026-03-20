@@ -1,6 +1,7 @@
 "use client";
 
 import TransactionModal from "@/components/TransactionModal";
+import { mockTransactions } from "@/lib/mockData";
 import {
   Transaction,
   TransactionForm,
@@ -16,49 +17,6 @@ const emptyForm: TransactionForm = {
   amount: "",
   date: new Date().toISOString().split("T")[0],
 };
-
-const mockTransactions: Transaction[] = [
-  {
-    id: 1,
-    type: "expense",
-    category: "餐飲",
-    note: "午餐",
-    amount: 120,
-    date: "2026-03-18",
-  },
-  {
-    id: 2,
-    type: "income",
-    category: "薪資",
-    note: "三月薪水",
-    amount: 15000,
-    date: "2026-03-17",
-  },
-  {
-    id: 3,
-    type: "expense",
-    category: "交通",
-    note: "捷運",
-    amount: 30,
-    date: "2026-03-17",
-  },
-  {
-    id: 4,
-    type: "expense",
-    category: "娛樂",
-    note: "電影",
-    amount: 280,
-    date: "2026-03-16",
-  },
-  {
-    id: 5,
-    type: "expense",
-    category: "餐飲",
-    note: "晚餐",
-    amount: 95,
-    date: "2026-03-16",
-  },
-];
 
 const categories = ["全部", "餐飲", "交通", "娛樂", "薪資", "其他"];
 
