@@ -2,19 +2,58 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import api from "@/lib/api";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import axios from "axios";
+import { useRedirectIfAuth } from "@/hooks/useRedirectIfAuth";
 
 export default function RegisterPage() {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
-  function handleSubmit(e: React.SyntheticEvent) {
-    e.preventDefault();
-    if (password !== confirmPassword) {
-      alert("密碼不一致");
-      return;
+  useRedirectIfAuth();
+
+  function validate() {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setErrorMessage("請輸入正確的 Email 格式");
+      return false;
     }
-    console.log({ email, password });
+    if (password !== confirmPassword) {
+      setErrorMessage("密碼不一致");
+      return false;
+    }
+    return true;
+  }
+
+  async function handleSubmit(e: React.SyntheticEvent) {
+    e.preventDefault();
+    if (!validate()) return;
+    setIsLoading(true);
+    try {
+      await api.post(`${process.env.NEXT_PUBLIC_API_URL}/auth/register`, {
+        email,
+        password,
+      });
+      toast.success("註冊成功", { duration: 3000 });
+      router.push("/login");
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        const status = error.response?.status;
+        if (status === 400) {
+          setErrorMessage(error.response?.data?.detail);
+        } else if (status === 422) {
+          setErrorMessage("請輸入正確的欄位格式");
+        }
+      }
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   return (
@@ -63,11 +102,15 @@ export default function RegisterPage() {
               placeholder="••••••••"
             />
           </div>
+          {errorMessage && (
+            <p className="text-red-500 text-sm">{errorMessage}</p>
+          )}
           <button
+            disabled={isLoading || !email || !password || !confirmPassword}
             type="submit"
-            className="bg-primary text-primary-foreground rounded py-2 text-sm font-medium mt-2"
+            className="bg-primary text-primary-foreground rounded py-2 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            註冊
+            {isLoading ? "註冊中..." : "註冊"}
           </button>
         </form>
       </div>

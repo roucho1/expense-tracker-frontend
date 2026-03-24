@@ -1,6 +1,17 @@
+"use client";
+
+import { useAuthStore } from "@/store/authStore";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 export default function Navbar() {
+  const { token, clearToken } = useAuthStore();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    setMounted(true);
+  }, []);
   return (
     <nav className="border-b px-6 py-4 flex items-center justify-between">
       <div className="flex items-center gap-6">
@@ -11,8 +22,16 @@ export default function Navbar() {
         <Link href="/analytics">分析</Link>
       </div>
       <div className="flex items-center gap-3">
-        <Link href="/login">登入</Link>
-        <Link href="/register">註冊</Link>
+        {mounted ? (
+          token ? (
+            <button onClick={clearToken}>登出</button>
+          ) : (
+            <>
+              <Link href="/login">登入</Link>
+              <Link href="/register">註冊</Link>
+            </>
+          )
+        ) : null}
       </div>
     </nav>
   );

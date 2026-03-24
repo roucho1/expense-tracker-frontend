@@ -2,14 +2,45 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import api from "@/lib/api";
+import { useAuthStore } from "@/store/authStore";
+import { LoginResponse } from "@/types/auth";
+import axios from "axios";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import { useRedirectIfAuth } from "@/hooks/useRedirectIfAuth";
 
 export default function LoginPage() {
+  const { setToken } = useAuthStore();
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
-  function handleSubmit(e: React.SyntheticEvent) {
+  useRedirectIfAuth();
+
+  async function handleSubmit(e: React.SyntheticEvent) {
     e.preventDefault();
-    console.log({ email, password });
+    setIsLoading(true);
+    try {
+      const res = await api.post<LoginResponse>(
+        `${process.env.NEXT_PUBLIC_API_URL}/auth/login`,
+        { email, password },
+      );
+      setToken(res.data.access_token);
+      toast.success("登入成功", { duration: 3000 });
+      router.push("/");
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        const status = error.response?.status;
+        if (status === 422 || status === 401) {
+          setErrorMessage("帳號或密碼錯誤");
+        }
+      }
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   return (
@@ -47,11 +78,15 @@ export default function LoginPage() {
               placeholder="••••••••"
             />
           </div>
+          {errorMessage && (
+            <p className="text-red-500 text-sm">{errorMessage}</p>
+          )}
           <button
+            disabled={isLoading || !email || !password}
             type="submit"
-            className="bg-primary text-primary-foreground rounded py-2 text-sm font-medium mt-2"
+            className="bg-primary text-primary-foreground rounded py-2 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            登入
+            {isLoading ? "登入中..." : "登入"}
           </button>
         </form>
       </div>
