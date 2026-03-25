@@ -1,74 +1,132 @@
 "use client";
 
 import TransactionModal from "@/components/TransactionModal";
-import { mockTransactions } from "@/lib/mockData";
+import api from "@/lib/api";
+import { Category } from "@/types/category";
 import {
   Transaction,
   TransactionForm,
   TransactionType,
 } from "@/types/transaction";
-import { useState } from "react";
+import axios from "axios";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
-// 新增預設值
-const emptyForm: TransactionForm = {
-  type: "expense",
-  category: "餐飲",
-  note: "",
-  amount: "",
-  date: new Date().toISOString().split("T")[0],
-};
-
-const categories = ["全部", "餐飲", "交通", "娛樂", "薪資", "其他"];
+const TRANSACTIONS_URL = `${process.env.NEXT_PUBLIC_API_URL}/transactions`;
+const CATEGORIES_URL = `${process.env.NEXT_PUBLIC_API_URL}/categories`;
 
 export default function TransactionsPage() {
+  const [isLoading, setIsLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
   const [filter, setFilter] = useState<TransactionType | "all">("all");
-  const [categoryFilter, setCategoryFilter] = useState("全部");
+  const [categoryFilter, setCategoryFilter] = useState<number | null>(null);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [deletingId, setDeletingId] = useState<number | null>(null);
   const [editingTransaction, setEditingTransaction] =
     useState<Transaction | null>(null);
-  const [transactions, setTransactions] =
-    useState<Transaction[]>(mockTransactions);
+
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  async function loadData() {
+    setIsLoading(true);
+    try {
+      const [categoriesRes, transactionsRes] = await Promise.all([
+        api.get<Category[]>(`${CATEGORIES_URL}`),
+        api.get<Transaction[]>(`${TRANSACTIONS_URL}`),
+      ]);
+      setCategories(categoriesRes.data);
+      setTransactions(transactionsRes.data);
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        toast.error("載入失敗，請稍後再試", { duration: 5000 });
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  }
+  async function getTransactions() {
+    try {
+      const res = await api.get<Transaction[]>(`${TRANSACTIONS_URL}`);
+      setTransactions(res.data);
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        toast.error("載入失敗，請稍後再試", { duration: 5000 });
+      }
+    }
+  }
 
   const filtered = transactions.filter((t) => {
     const matchType = filter === "all" || t.type === filter;
     const matchCategory =
-      categoryFilter === "全部" || t.category === categoryFilter;
+      categoryFilter === null || t.category_id === categoryFilter;
     return matchType && matchCategory;
   });
 
-  function addTransaction(data: TransactionForm) {
-    setTransactions((prev) => [
-      ...prev,
-      {
-        id: Math.max(...prev.map((r) => r.id)) + 1,
-        type: data.type,
-        category: data.category,
-        note: data.note,
-        amount: Number(data.amount),
-        date: data.date,
-      },
-    ]);
+  async function addTransaction(data: TransactionForm) {
+    try {
+      await api.post<Transaction>(
+        `${process.env.NEXT_PUBLIC_API_URL}/transactions`,
+        { ...data, amount: Number(data.amount) },
+      );
+      toast.success("新增成功", { duration: 3000 });
+      await getTransactions();
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        toast.error("新增失敗，請稍後再試", { duration: 5000 });
+      }
+    }
   }
 
-  function updateTransaction(id: number, data: TransactionForm) {
-    setTransactions((prev) =>
-      prev.map((res) =>
-        res.id === id
-          ? {
-              ...res,
-              type: data.type,
-              category: data.category,
-              note: data.note,
-              amount: Number(data.amount),
-              date: data.date,
-            }
-          : res,
-      ),
-    );
+  async function updateTransaction(id: number, data: TransactionForm) {
+    try {
+      await api.put<Transaction>(
+        `${process.env.NEXT_PUBLIC_API_URL}/transactions/${id}`,
+        { ...data, amount: Number(data.amount) },
+      );
+      toast.success("編輯成功", { duration: 3000 });
+      await getTransactions();
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        toast.error("編輯失敗，請稍後再試", { duration: 5000 });
+      }
+    }
   }
 
-  function deleteTransaction(id: number) {
-    setTransactions((prev) => prev.filter((r) => r.id !== id));
+  async function deleteTransaction(id: number) {
+    try {
+      await api.delete<Transaction>(
+        `${process.env.NEXT_PUBLIC_API_URL}/transactions/${id}`,
+      );
+      toast.success("刪除成功", { duration: 3000 });
+      await getTransactions();
+      setDeletingId(null);
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        toast.error("刪除失敗，請稍後再試", { duration: 5000 });
+      }
+    }
+  }
+  function createEmptyForm(): TransactionForm {
+    return {
+      type: "expense",
+      category_id: null,
+      note: "",
+      amount: "",
+      date: new Date().toISOString().split("T")[0],
+    };
   }
 
   return (
@@ -99,22 +157,40 @@ export default function TransactionsPage() {
 
       {/* 篩選：分類 */}
       <div className="flex gap-2 flex-wrap">
+        <button
+          onClick={() => setCategoryFilter(null)}
+          className={`text-sm px-3 py-1 rounded-full border ${
+            categoryFilter === null ? "bg-primary text-primary-foreground" : ""
+          }`}
+        >
+          全部
+        </button>
         {categories.map((c) => (
           <button
-            key={c}
-            onClick={() => setCategoryFilter(c)}
+            key={c.id}
+            onClick={() => setCategoryFilter(c.id)}
             className={`text-sm px-3 py-1 rounded-full border ${
-              categoryFilter === c ? "bg-primary text-primary-foreground" : ""
+              categoryFilter === c.id
+                ? "bg-primary text-primary-foreground"
+                : ""
             }`}
           >
-            {c}
+            {c.name}
           </button>
         ))}
       </div>
 
       {/* 列表 */}
       <div className="flex flex-col gap-2">
-        {filtered.length === 0 ? (
+        {isLoading ? (
+          <div className="text-center text-muted-foreground py-12 text-sm">
+            載入中...
+          </div>
+        ) : transactions.length === 0 ? (
+          <div className="text-center text-muted-foreground py-12 text-sm">
+            還沒有記帳紀錄，點擊右上角新增第一筆吧！
+          </div>
+        ) : filtered.length === 0 ? (
           <div className="text-center text-muted-foreground py-12 text-sm">
             沒有符合條件的紀錄
           </div>
@@ -127,7 +203,9 @@ export default function TransactionsPage() {
               <div className="flex flex-col gap-0.5">
                 <span className="text-sm font-medium">{t.note}</span>
                 <span className="text-xs text-muted-foreground">
-                  {t.category}・{t.date}
+                  {categories.find((c) => c.id === t.category_id)?.name ??
+                    "未分類"}
+                  ・{t.date}
                 </span>
               </div>
               <div className="flex items-center gap-3">
@@ -144,7 +222,7 @@ export default function TransactionsPage() {
                   編輯
                 </button>
                 <button
-                  onClick={() => deleteTransaction(t.id)}
+                  onClick={() => setDeletingId(t.id)}
                   className="text-xs text-red-400 hover:text-red-600"
                 >
                   刪除
@@ -160,11 +238,11 @@ export default function TransactionsPage() {
           setModalOpen(false);
           setEditingTransaction(null);
         }}
-        onSubmit={(data) => {
+        onSubmit={async (data) => {
           if (editingTransaction) {
-            updateTransaction(editingTransaction.id, data);
+            await updateTransaction(editingTransaction.id, data);
           } else {
-            addTransaction(data);
+            await addTransaction(data);
           }
           setModalOpen(false);
           setEditingTransaction(null);
@@ -173,14 +251,37 @@ export default function TransactionsPage() {
           editingTransaction
             ? {
                 type: editingTransaction.type,
-                category: editingTransaction.category,
+                category_id: editingTransaction.category_id,
                 note: editingTransaction.note,
                 amount: String(editingTransaction.amount),
                 date: editingTransaction.date,
               }
-            : emptyForm
+            : createEmptyForm()
         }
+        categories={categories}
       />
+      <AlertDialog
+        open={deletingId !== null}
+        onOpenChange={() => setDeletingId(null)}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>確定要刪除？</AlertDialogTitle>
+            <AlertDialogDescription>此操作無法復原</AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>取消</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-red-500 hover:bg-red-600 text-white"
+              onClick={async () =>
+                deletingId && (await deleteTransaction(deletingId))
+              }
+            >
+              刪除
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

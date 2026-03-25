@@ -1,4 +1,5 @@
 import axios from "axios";
+import { toast } from "sonner";
 
 const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
@@ -12,5 +13,18 @@ api.interceptors.request.use((config) => {
   }
   return config;
 });
+
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      toast.error("登入已過期，請重新登入", { duration: 3000 });
+      setTimeout(() => {
+        window.location.href = "/login";
+      }, 3000);
+    }
+    return Promise.reject(error);
+  },
+);
 
 export default api;

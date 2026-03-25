@@ -8,15 +8,14 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { TransactionForm, TransactionType } from "@/types/transaction";
-
-const expenseCategories = ["餐飲", "交通", "娛樂", "購物", "醫療", "其他"];
-const incomeCategories = ["薪資", "獎金", "投資", "其他"];
+import { Category } from "@/types/category";
 
 interface Props {
   open: boolean;
   onClose: () => void;
   onSubmit: (data: TransactionForm) => void;
   initialData: TransactionForm;
+  categories: Category[];
 }
 
 export default function TransactionModal({
@@ -24,6 +23,7 @@ export default function TransactionModal({
   onClose,
   onSubmit,
   initialData,
+  categories,
 }: Props) {
   const [form, setForm] = useState<TransactionForm>(initialData);
   useEffect(() => {
@@ -38,7 +38,7 @@ export default function TransactionModal({
     setForm((prev) => ({
       ...prev,
       type,
-      category: type === "expense" ? "餐飲" : "薪資",
+      category_id: categories[0]?.id ?? null,
     }));
   }
 
@@ -52,14 +52,13 @@ export default function TransactionModal({
     onClose();
   }
 
-  const categories =
-    form.type === "expense" ? expenseCategories : incomeCategories;
-
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>新增記帳</DialogTitle>
+          <DialogTitle>
+            {initialData.note ? "編輯記帳" : "新增記帳"}
+          </DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="flex flex-col gap-4 mt-2">
           {/* 類型 */}
@@ -83,13 +82,20 @@ export default function TransactionModal({
           <div className="flex flex-col gap-1.5">
             <label className="text-sm font-medium">分類</label>
             <select
-              value={form.category}
-              onChange={(e) => handleChange("category", e.target.value)}
+              value={form.category_id ?? ""}
+              onChange={(e) => {
+                setForm((prev) => ({
+                  ...prev,
+                  category_id:
+                    e.target.value === "" ? null : Number(e.target.value),
+                }));
+              }}
               className="border rounded px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring bg-background"
             >
+              <option value="">未分類</option>
               {categories.map((c) => (
-                <option key={c} value={c}>
-                  {c}
+                <option key={c.id} value={c.id}>
+                  {c.name}
                 </option>
               ))}
             </select>
