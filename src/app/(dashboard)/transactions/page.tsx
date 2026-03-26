@@ -7,6 +7,8 @@ import {
   Transaction,
   TransactionForm,
   TransactionType,
+  createEmptyForm,
+  sortByDate,
 } from "@/types/transaction";
 import axios from "axios";
 import { useEffect, useState } from "react";
@@ -48,7 +50,7 @@ export default function TransactionsPage() {
         api.get<Transaction[]>(`${TRANSACTIONS_URL}`),
       ]);
       setCategories(categoriesRes.data);
-      setTransactions(transactionsRes.data);
+      setTransactions(sortByDate(transactionsRes.data));
     } catch (error) {
       if (axios.isAxiosError(error)) {
         toast.error("載入失敗，請稍後再試", { duration: 5000 });
@@ -60,7 +62,7 @@ export default function TransactionsPage() {
   async function getTransactions() {
     try {
       const res = await api.get<Transaction[]>(`${TRANSACTIONS_URL}`);
-      setTransactions(res.data);
+      setTransactions(sortByDate(res.data));
     } catch (error) {
       if (axios.isAxiosError(error)) {
         toast.error("載入失敗，請稍後再試", { duration: 5000 });
@@ -121,15 +123,6 @@ export default function TransactionsPage() {
         toast.error("刪除失敗，請稍後再試", { duration: 5000 });
       }
     }
-  }
-  function createEmptyForm(): TransactionForm {
-    return {
-      type: "expense",
-      category_id: null,
-      note: "",
-      amount: "",
-      date: new Date().toISOString().split("T")[0],
-    };
   }
 
   return (
@@ -194,15 +187,15 @@ export default function TransactionsPage() {
       {/* 列表 */}
       <div className="flex flex-col gap-2">
         {isLoading ? (
-          <div className="text-center text-muted-foreground py-12 text-sm">
+          <div className="text-center text-muted-foreground py-12 text-base">
             載入中...
           </div>
         ) : transactions.length === 0 ? (
-          <div className="text-center text-muted-foreground py-12 text-sm">
+          <div className="text-center text-muted-foreground py-12 text-base">
             還沒有記帳紀錄，點擊右上角新增第一筆吧！
           </div>
         ) : filtered.length === 0 ? (
-          <div className="text-center text-muted-foreground py-12 text-sm">
+          <div className="text-center text-muted-foreground py-12 text-base">
             沒有符合條件的紀錄
           </div>
         ) : (
