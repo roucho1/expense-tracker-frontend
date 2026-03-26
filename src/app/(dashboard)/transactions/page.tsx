@@ -29,7 +29,7 @@ export default function TransactionsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
   const [filter, setFilter] = useState<TransactionType | "all">("all");
-  const [categoryFilter, setCategoryFilter] = useState<number | null>(null);
+  const [categoryFilter, setCategoryFilter] = useState<number | null>(null); // null = 全部, 0 = 未分類, 其他數字 = 對應分類 id
   const [categories, setCategories] = useState<Category[]>([]);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [deletingId, setDeletingId] = useState<number | null>(null);
@@ -71,7 +71,10 @@ export default function TransactionsPage() {
   const filtered = transactions.filter((t) => {
     const matchType = filter === "all" || t.type === filter;
     const matchCategory =
-      categoryFilter === null || t.category_id === categoryFilter;
+      categoryFilter === null ||
+      (categoryFilter === 0
+        ? t.category_id === null
+        : t.category_id === categoryFilter);
     return matchType && matchCategory;
   });
 
@@ -164,6 +167,14 @@ export default function TransactionsPage() {
           }`}
         >
           全部
+        </button>
+        <button
+          onClick={() => setCategoryFilter(0)}
+          className={`text-sm px-3 py-1 rounded-full border ${
+            categoryFilter === 0 ? "bg-primary text-primary-foreground" : ""
+          }`}
+        >
+          未分類
         </button>
         {categories.map((c) => (
           <button
