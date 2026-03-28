@@ -246,6 +246,7 @@ export default function SettingsPage() {
             </button>
           </div>
         </div>
+
         <div className="border rounded-lg flex flex-col divide-y">
           {isCategoryLoading ? (
             <div className="text-center text-muted-foreground py-12 text-base">
@@ -253,6 +254,11 @@ export default function SettingsPage() {
             </div>
           ) : (
             <>
+              {categories.length === 0 && (
+                <div className="text-center text-muted-foreground py-8 text-sm">
+                  還沒有分類，點擊右上角新增第一個吧！
+                </div>
+              )}
               {categories.map((c) => (
                 <div
                   key={c.id}
