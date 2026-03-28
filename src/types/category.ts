@@ -6,3 +6,7 @@ export interface Category {
   type: TransactionType;
   created_at: string;
 }
+export interface CategoryForm {
+  name: string;
+  type: TransactionType;
+}

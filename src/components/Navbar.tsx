@@ -24,7 +24,10 @@ export default function Navbar() {
       <div className="flex items-center gap-3">
         {mounted ? (
           token ? (
-            <button onClick={clearToken}>登出</button>
+            <>
+              <Link href="/settings">設定</Link>
+              <button onClick={clearToken}>登出</button>
+            </>
           ) : (
             <>
               <Link href="/login">登入</Link>
