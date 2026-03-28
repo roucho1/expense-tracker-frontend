@@ -143,7 +143,10 @@ export default function TransactionsPage() {
         {(["all", "income", "expense"] as const).map((f) => (
           <button
             key={f}
-            onClick={() => setFilter(f)}
+            onClick={() => {
+              setFilter(f);
+              setCategoryFilter(null);
+            }}
             className={`px-4 py-1.5 ${filter === f ? "bg-primary text-primary-foreground" : ""}`}
           >
             {f === "all" ? "全部" : f === "income" ? "收入" : "支出"}
@@ -169,19 +172,21 @@ export default function TransactionsPage() {
         >
           未分類
         </button>
-        {categories.map((c) => (
-          <button
-            key={c.id}
-            onClick={() => setCategoryFilter(c.id)}
-            className={`text-sm px-3 py-1 rounded-full border ${
-              categoryFilter === c.id
-                ? "bg-primary text-primary-foreground"
-                : ""
-            }`}
-          >
-            {c.name}
-          </button>
-        ))}
+        {categories
+          .filter((c) => filter === "all" || c.type === filter)
+          .map((c) => (
+            <button
+              key={c.id}
+              onClick={() => setCategoryFilter(c.id)}
+              className={`text-sm px-3 py-1 rounded-full border ${
+                categoryFilter === c.id
+                  ? "bg-primary text-primary-foreground"
+                  : ""
+              }`}
+            >
+              {c.name}
+            </button>
+          ))}
       </div>
 
       {/* 列表 */}
