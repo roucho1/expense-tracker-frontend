@@ -35,8 +35,13 @@ export function createEmptyForm(
   };
 }
 
-export function sortByDate(data: Transaction[]): Transaction[] {
+export function sortByDateDesc(data: Transaction[]): Transaction[] {
   return [...data].sort(
     (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
+  );
+}
+export function sortByDateAsc(data: Transaction[]): Transaction[] {
+  return [...data].sort(
+    (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
   );
 }

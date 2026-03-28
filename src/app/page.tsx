@@ -8,7 +8,7 @@ import {
   TransactionForm,
   TransactionType,
   createEmptyForm,
-  sortByDate,
+  sortByDateDesc,
 } from "@/types/transaction";
 import axios from "axios";
 import dayjs from "dayjs";
@@ -73,7 +73,7 @@ export default function HomePage() {
       ]);
       setCategories(categoriesRes.data);
       setAllTransactions(transactionsRes.data);
-      setRecentTransactions(sortByDate(transactionsRes.data).slice(0, 5));
+      setRecentTransactions(sortByDateDesc(transactionsRes.data).slice(0, 5));
     } catch (error) {
       if (axios.isAxiosError(error)) {
         toast.error("載入失敗，請稍後再試", { duration: 5000 });
@@ -87,7 +87,7 @@ export default function HomePage() {
     try {
       const res = await api.get<Transaction[]>(`${TRANSACTIONS_URL}`);
       setAllTransactions(res.data);
-      setRecentTransactions(sortByDate(res.data).slice(0, 5));
+      setRecentTransactions(sortByDateDesc(res.data).slice(0, 5));
     } catch (error) {
       if (axios.isAxiosError(error)) {
         toast.error("載入失敗，請稍後再試", { duration: 5000 });

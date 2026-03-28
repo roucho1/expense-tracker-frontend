@@ -8,7 +8,7 @@ import {
   TransactionForm,
   TransactionType,
   createEmptyForm,
-  sortByDate,
+  sortByDateDesc,
 } from "@/types/transaction";
 import axios from "axios";
 import { useEffect, useState } from "react";
@@ -50,7 +50,7 @@ export default function TransactionsPage() {
         api.get<Transaction[]>(`${TRANSACTIONS_URL}`),
       ]);
       setCategories(categoriesRes.data);
-      setTransactions(sortByDate(transactionsRes.data));
+      setTransactions(sortByDateDesc(transactionsRes.data));
     } catch (error) {
       if (axios.isAxiosError(error)) {
         toast.error("載入失敗，請稍後再試", { duration: 5000 });
@@ -62,7 +62,7 @@ export default function TransactionsPage() {
   async function getTransactions() {
     try {
       const res = await api.get<Transaction[]>(`${TRANSACTIONS_URL}`);
-      setTransactions(sortByDate(res.data));
+      setTransactions(sortByDateDesc(res.data));
     } catch (error) {
       if (axios.isAxiosError(error)) {
         toast.error("載入失敗，請稍後再試", { duration: 5000 });
