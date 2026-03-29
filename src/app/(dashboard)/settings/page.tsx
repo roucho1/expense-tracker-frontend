@@ -142,6 +142,10 @@ export default function SettingsPage() {
       setErrorMessage("新密碼不能與舊密碼相同");
       return false;
     }
+    if (newPassword.length < 8) {
+      setErrorMessage("密碼至少需要 8 個字元");
+      return false;
+    }
     if (newPassword !== confirmPassword) {
       setErrorMessage("密碼不一致");
       return false;

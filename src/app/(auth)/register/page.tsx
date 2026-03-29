@@ -24,6 +24,10 @@ export default function RegisterPage() {
       setErrorMessage("請輸入正確的 Email 格式");
       return false;
     }
+    if (password.length < 8) {
+      setErrorMessage("密碼至少需要 8 個字元");
+      return false;
+    }
     if (password !== confirmPassword) {
       setErrorMessage("密碼不一致");
       return false;

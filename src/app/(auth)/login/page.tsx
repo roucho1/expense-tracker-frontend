@@ -20,8 +20,18 @@ export default function LoginPage() {
 
   useRedirectIfAuth();
 
+  function validate() {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setErrorMessage("請輸入正確的 Email 格式");
+      return false;
+    }
+    return true;
+  }
+
   async function handleSubmit(e: React.SyntheticEvent) {
     e.preventDefault();
+    if (!validate()) return;
     setIsLoading(true);
     try {
       const res = await api.post<LoginResponse>(
