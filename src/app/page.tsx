@@ -17,6 +17,7 @@ import "dayjs/locale/zh-tw";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
+import WelcomeModal from "@/components/WelcomeModal";
 
 const periods = ["日", "週", "月"] as const;
 type Period = (typeof periods)[number];
@@ -33,6 +34,7 @@ const TRANSACTIONS_URL = `${process.env.NEXT_PUBLIC_API_URL}/transactions`;
 const CATEGORIES_URL = `${process.env.NEXT_PUBLIC_API_URL}/categories`;
 
 export default function HomePage() {
+  const [openWelcomeModal, setOpenWelcomeModal] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [quickAddType, setQuickAddType] = useState<TransactionType | null>(
     null,
@@ -74,6 +76,7 @@ export default function HomePage() {
       setCategories(categoriesRes.data);
       setAllTransactions(transactionsRes.data);
       setRecentTransactions(sortByDateDesc(transactionsRes.data).slice(0, 5));
+      if (categoriesRes.data.length === 0) setOpenWelcomeModal(true);
     } catch (error) {
       if (axios.isAxiosError(error)) {
         toast.error("載入失敗，請稍後再試", { duration: 5000 });
@@ -220,6 +223,10 @@ export default function HomePage() {
         }}
         initialData={createEmptyForm(quickAddType ?? "expense")}
         categories={categories}
+      />
+      <WelcomeModal
+        open={openWelcomeModal}
+        onClose={() => setOpenWelcomeModal(false)}
       />
     </div>
   );
