@@ -22,6 +22,7 @@ import axios from "axios";
 import { toast } from "sonner";
 import dayjs from "dayjs";
 import isoWeek from "dayjs/plugin/isoWeek";
+import { useRequireAuth } from "@/hooks/useRequireAuth";
 dayjs.extend(isoWeek);
 
 // ── 型別 ──────────────────────────────────────────────
@@ -136,6 +137,7 @@ function StatCard({
 
 // ── 主元件 ────────────────────────────────────────────
 export default function AnalyticsPage() {
+  useRequireAuth();
   const [isLoading, setIsLoading] = useState(true);
   const [categories, setCategories] = useState<Category[]>([]);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -158,7 +160,7 @@ export default function AnalyticsPage() {
       setCategories(categoriesRes.data);
       setTransactions(transactionsRes.data);
     } catch (error) {
-      if (axios.isAxiosError(error)) {
+      if (axios.isAxiosError(error) && error.response?.status !== 401) {
         toast.error("載入失敗，請稍後再試", { duration: 5000 });
       }
     } finally {

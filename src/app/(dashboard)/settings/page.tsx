@@ -20,8 +20,10 @@ import {
 } from "@/components/ui/alert-dialog";
 import CategoryModal from "@/components/CategoryModal";
 import { TransactionType } from "@/types/transaction";
+import { useRequireAuth } from "@/hooks/useRequireAuth";
 
 export default function SettingsPage() {
+  useRequireAuth();
   const [isExpand, setIsExpand] = useState(false);
   const [isUserLoading, setIsUserLoading] = useState(true);
   const [isCategoryLoading, setIsCategoryLoading] = useState(true);
@@ -53,7 +55,7 @@ export default function SettingsPage() {
       setUser(user.data);
       setCategories(categoriesRes.data);
     } catch (error) {
-      if (axios.isAxiosError(error)) {
+      if (axios.isAxiosError(error) && error.response?.status !== 401) {
         toast.error("載入失敗，請稍後再試", { duration: 5000 });
       }
     } finally {

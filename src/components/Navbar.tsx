@@ -2,11 +2,14 @@
 
 import { useAuthStore } from "@/store/authStore";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function Navbar() {
   const { token, clearToken } = useAuthStore();
   const [mounted, setMounted] = useState(false);
+
+  const router = useRouter();
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -18,15 +21,26 @@ export default function Navbar() {
         <Link href="/" className="font-bold text-lg">
           💰 Expense Tracker
         </Link>
-        <Link href="/transactions">記帳</Link>
-        <Link href="/analytics">分析</Link>
+        {token && (
+          <>
+            <Link href="/transactions">記帳</Link>
+            <Link href="/analytics">分析</Link>
+          </>
+        )}
       </div>
       <div className="flex items-center gap-3">
         {mounted ? (
           token ? (
             <>
               <Link href="/settings">設定</Link>
-              <button onClick={clearToken}>登出</button>
+              <button
+                onClick={() => {
+                  clearToken();
+                  router.push("/login");
+                }}
+              >
+                登出
+              </button>
             </>
           ) : (
             <>

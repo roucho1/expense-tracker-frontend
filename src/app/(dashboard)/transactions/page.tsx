@@ -23,11 +23,13 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { useRequireAuth } from "@/hooks/useRequireAuth";
 
 const TRANSACTIONS_URL = `${process.env.NEXT_PUBLIC_API_URL}/transactions`;
 const CATEGORIES_URL = `${process.env.NEXT_PUBLIC_API_URL}/categories`;
 
 export default function TransactionsPage() {
+  useRequireAuth();
   const [isLoading, setIsLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
   const [filter, setFilter] = useState<TransactionType | "all">("all");
@@ -52,7 +54,7 @@ export default function TransactionsPage() {
       setCategories(categoriesRes.data);
       setTransactions(sortByDateDesc(transactionsRes.data));
     } catch (error) {
-      if (axios.isAxiosError(error)) {
+      if (axios.isAxiosError(error) && error.response?.status !== 401) {
         toast.error("載入失敗，請稍後再試", { duration: 5000 });
       }
     } finally {
