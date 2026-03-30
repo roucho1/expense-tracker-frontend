@@ -17,7 +17,6 @@ import {
 } from "recharts";
 import { Transaction, sortByDateAsc } from "@/types/transaction";
 import { Category } from "@/types/category";
-import api from "@/lib/api";
 import axios from "axios";
 import { toast } from "sonner";
 import dayjs from "dayjs";
