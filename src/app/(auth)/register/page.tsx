@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import axios from "axios";
 import { useRedirectIfAuth } from "@/hooks/useRedirectIfAuth";
+import { authApi } from "@/lib/authApi";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -40,10 +41,7 @@ export default function RegisterPage() {
     if (!validate()) return;
     setIsLoading(true);
     try {
-      await api.post(`${process.env.NEXT_PUBLIC_API_URL}/auth/register`, {
-        email,
-        password,
-      });
+      await authApi.register(email, password);
       toast.success("註冊成功", { duration: 3000 });
       router.push("/login");
     } catch (error) {

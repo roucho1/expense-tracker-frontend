@@ -24,9 +24,8 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { useRequireAuth } from "@/hooks/useRequireAuth";
-
-const TRANSACTIONS_URL = `${process.env.NEXT_PUBLIC_API_URL}/transactions`;
-const CATEGORIES_URL = `${process.env.NEXT_PUBLIC_API_URL}/categories`;
+import { categoryApi } from "@/lib/categoryApi";
+import { transactionApi } from "@/lib/transactionApi";
 
 export default function TransactionsPage() {
   useRequireAuth();
@@ -48,8 +47,8 @@ export default function TransactionsPage() {
     setIsLoading(true);
     try {
       const [categoriesRes, transactionsRes] = await Promise.all([
-        api.get<Category[]>(`${CATEGORIES_URL}`),
-        api.get<Transaction[]>(`${TRANSACTIONS_URL}`),
+        categoryApi.getAll(),
+        transactionApi.getAll(),
       ]);
       setCategories(categoriesRes.data);
       setTransactions(sortByDateDesc(transactionsRes.data));
@@ -84,10 +83,7 @@ export default function TransactionsPage() {
 
   async function addTransaction(data: TransactionForm) {
     try {
-      await api.post<Transaction>(
-        `${process.env.NEXT_PUBLIC_API_URL}/transactions`,
-        { ...data, amount: Number(data.amount) },
-      );
+      await transactionApi.create(data);
       toast.success("新增成功", { duration: 3000 });
       await getTransactions();
     } catch (error) {
@@ -99,10 +95,7 @@ export default function TransactionsPage() {
 
   async function updateTransaction(id: number, data: TransactionForm) {
     try {
-      await api.put<Transaction>(
-        `${process.env.NEXT_PUBLIC_API_URL}/transactions/${id}`,
-        { ...data, amount: Number(data.amount) },
-      );
+      await transactionApi.update(id, data);
       toast.success("編輯成功", { duration: 3000 });
       await getTransactions();
     } catch (error) {
@@ -114,9 +107,7 @@ export default function TransactionsPage() {
 
   async function deleteTransaction(id: number) {
     try {
-      await api.delete<Transaction>(
-        `${process.env.NEXT_PUBLIC_API_URL}/transactions/${id}`,
-      );
+      await transactionApi.delete(id);
       toast.success("刪除成功", { duration: 3000 });
       await getTransactions();
       setDeletingId(null);

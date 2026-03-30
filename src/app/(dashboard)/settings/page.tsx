@@ -21,6 +21,8 @@ import {
 import CategoryModal from "@/components/CategoryModal";
 import { TransactionType } from "@/types/transaction";
 import { useRequireAuth } from "@/hooks/useRequireAuth";
+import { categoryApi } from "@/lib/categoryApi";
+import { authApi } from "@/lib/authApi";
 
 export default function SettingsPage() {
   useRequireAuth();
@@ -49,8 +51,8 @@ export default function SettingsPage() {
     setIsCategoryLoading(true);
     try {
       const [user, categoriesRes] = await Promise.all([
-        api.get<userResponse>(`${process.env.NEXT_PUBLIC_API_URL}/auth/me`),
-        api.get<Category[]>(`${process.env.NEXT_PUBLIC_API_URL}/categories`),
+        authApi.getMe(),
+        categoryApi.getAll(),
       ]);
       setUser(user.data);
       setCategories(categoriesRes.data);
@@ -69,10 +71,7 @@ export default function SettingsPage() {
     setErrorMessage("");
     setIsFormSending(true);
     try {
-      const res = await api.put<{ message: string }>(
-        `${process.env.NEXT_PUBLIC_API_URL}/auth/change-password`,
-        { old_password: oldPassword, new_password: newPassword },
-      );
+      const res = await authApi.changePassword(oldPassword, newPassword);
       toast.success(res.data.message, { duration: 3000 });
       setIsExpand(false);
       setErrorMessage("");
@@ -93,10 +92,7 @@ export default function SettingsPage() {
 
   async function addCategory(data: CategoryForm) {
     try {
-      const res = await api.post<Category>(
-        `${process.env.NEXT_PUBLIC_API_URL}/categories`,
-        data,
-      );
+      const res = await categoryApi.create(data);
       toast.success("新增成功", { duration: 3000 });
       setCategories((prev) => [...prev, res.data]);
     } catch (error) {
@@ -107,10 +103,7 @@ export default function SettingsPage() {
   }
   async function updateCategory(id: number, data: CategoryForm) {
     try {
-      await api.put<Category>(
-        `${process.env.NEXT_PUBLIC_API_URL}/categories/${id}`,
-        data,
-      );
+      await await categoryApi.update(id, data);
       toast.success("編輯成功", { duration: 3000 });
       setCategories((prev) =>
         prev.map((c) =>
@@ -126,9 +119,7 @@ export default function SettingsPage() {
   }
   async function deleteCategory(id: number) {
     try {
-      await api.delete<{ message: string }>(
-        `${process.env.NEXT_PUBLIC_API_URL}/categories/${id}`,
-      );
+      await categoryApi.delete(id);
       toast.success("刪除成功", { duration: 3000 });
       setCategories((prev) => prev.filter((c) => c.id !== id));
       setDeletingId(null);

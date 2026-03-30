@@ -19,6 +19,8 @@ import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import WelcomeModal from "@/components/WelcomeModal";
 import { useRequireAuth } from "@/hooks/useRequireAuth";
+import { transactionApi } from "@/lib/transactionApi";
+import { categoryApi } from "@/lib/categoryApi";
 
 const periods = ["日", "週", "月"] as const;
 type Period = (typeof periods)[number];
@@ -30,9 +32,6 @@ const startOfDay = dayjs().format("YYYY-MM-DD");
 const startOfWeek = dayjs().weekday(0).format("YYYY-MM-DD");
 // 這個月第一天的日期
 const startOfMonth = dayjs().startOf("month").format("YYYY-MM-DD");
-
-const TRANSACTIONS_URL = `${process.env.NEXT_PUBLIC_API_URL}/transactions`;
-const CATEGORIES_URL = `${process.env.NEXT_PUBLIC_API_URL}/categories`;
 
 export default function HomePage() {
   useRequireAuth();
@@ -72,8 +71,8 @@ export default function HomePage() {
     setIsLoading(true);
     try {
       const [categoriesRes, transactionsRes] = await Promise.all([
-        api.get<Category[]>(`${CATEGORIES_URL}`),
-        api.get<Transaction[]>(`${TRANSACTIONS_URL}`),
+        categoryApi.getAll(),
+        transactionApi.getAll(),
       ]);
       setCategories(categoriesRes.data);
       setAllTransactions(transactionsRes.data);
@@ -102,10 +101,7 @@ export default function HomePage() {
 
   async function addTransaction(data: TransactionForm) {
     try {
-      await api.post<Transaction>(
-        `${process.env.NEXT_PUBLIC_API_URL}/transactions`,
-        { ...data, amount: Number(data.amount) },
-      );
+      await transactionApi.create(data);
       toast.success("新增成功", { duration: 3000 });
       await getTransactions();
     } catch (error) {

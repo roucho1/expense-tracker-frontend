@@ -23,6 +23,8 @@ import { toast } from "sonner";
 import dayjs from "dayjs";
 import isoWeek from "dayjs/plugin/isoWeek";
 import { useRequireAuth } from "@/hooks/useRequireAuth";
+import { categoryApi } from "@/lib/categoryApi";
+import { transactionApi } from "@/lib/transactionApi";
 dayjs.extend(isoWeek);
 
 // ── 型別 ──────────────────────────────────────────────
@@ -152,10 +154,8 @@ export default function AnalyticsPage() {
     setIsLoading(true);
     try {
       const [categoriesRes, transactionsRes] = await Promise.all([
-        api.get<Category[]>(`${process.env.NEXT_PUBLIC_API_URL}/categories`),
-        api.get<Transaction[]>(
-          `${process.env.NEXT_PUBLIC_API_URL}/transactions`,
-        ),
+        categoryApi.getAll(),
+        transactionApi.getAll(),
       ]);
       setCategories(categoriesRes.data);
       setTransactions(transactionsRes.data);

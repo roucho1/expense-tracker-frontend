@@ -9,6 +9,7 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useRedirectIfAuth } from "@/hooks/useRedirectIfAuth";
+import { authApi } from "@/lib/authApi";
 
 export default function LoginPage() {
   const { setToken } = useAuthStore();
@@ -34,10 +35,7 @@ export default function LoginPage() {
     if (!validate()) return;
     setIsLoading(true);
     try {
-      const res = await api.post<LoginResponse>(
-        `${process.env.NEXT_PUBLIC_API_URL}/auth/login`,
-        { email, password },
-      );
+      const res = await authApi.login(email, password);
       setToken(res.data.access_token);
       toast.success("登入成功", { duration: 3000 });
       router.push("/");
