@@ -1,7 +1,6 @@
 "use client";
 
 import TransactionModal from "@/components/TransactionModal";
-import api from "@/lib/api";
 import { Category } from "@/types/category";
 import {
   Transaction,
@@ -62,7 +61,7 @@ export default function TransactionsPage() {
   }
   async function getTransactions() {
     try {
-      const res = await api.get<Transaction[]>(`${TRANSACTIONS_URL}`);
+      const res = await transactionApi.getAll();
       setTransactions(sortByDateDesc(res.data));
     } catch (error) {
       if (axios.isAxiosError(error)) {

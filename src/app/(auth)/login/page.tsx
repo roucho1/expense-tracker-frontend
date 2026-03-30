@@ -2,9 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import api from "@/lib/api";
 import { useAuthStore } from "@/store/authStore";
-import { LoginResponse } from "@/types/auth";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";

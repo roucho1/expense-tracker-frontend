@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import api from "@/lib/api";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import axios from "axios";

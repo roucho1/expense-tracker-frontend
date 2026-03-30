@@ -1,6 +1,5 @@
 "use client";
 
-import api from "@/lib/api";
 import { Category, CategoryForm } from "@/types/category";
 import axios from "axios";
 import dayjs from "dayjs";
