@@ -4,7 +4,13 @@ import api from "./api";
 const BASE = `${process.env.NEXT_PUBLIC_API_URL}/transactions`;
 
 export const transactionApi = {
-  getAll: () => api.get<Transaction[]>(BASE),
+  getAll: (params?: { startDate?: string; endDate?: string }) =>
+    api.get<Transaction[]>(BASE, {
+      params: {
+        start_date: params?.startDate,
+        end_date: params?.endDate,
+      },
+    }),
   create: (data: TransactionForm) =>
     api.post<Transaction>(BASE, { ...data, amount: Number(data.amount) }),
   update: (id: number, data: TransactionForm) =>

@@ -37,10 +37,19 @@ export default function TransactionsPage() {
   const [deletingId, setDeletingId] = useState<number | null>(null);
   const [editingTransaction, setEditingTransaction] =
     useState<Transaction | null>(null);
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [isFetching, setIsFetching] = useState(false);
 
   useEffect(() => {
     loadData();
   }, []);
+
+  useEffect(() => {
+    setIsFetching(true);
+    getTransactions().finally(() => setIsFetching(false));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [startDate, endDate]);
 
   async function loadData() {
     setIsLoading(true);
@@ -61,7 +70,10 @@ export default function TransactionsPage() {
   }
   async function getTransactions() {
     try {
-      const res = await transactionApi.getAll();
+      const res = await transactionApi.getAll({
+        startDate: startDate || undefined,
+        endDate: endDate || undefined,
+      });
       setTransactions(sortByDateDesc(res.data));
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -115,6 +127,12 @@ export default function TransactionsPage() {
         toast.error("刪除失敗，請稍後再試", { duration: 5000 });
       }
     }
+  }
+
+  // 清除篩選
+  function handleClear() {
+    setStartDate("");
+    setEndDate("");
   }
 
   return (
@@ -180,6 +198,39 @@ export default function TransactionsPage() {
             </button>
           ))}
       </div>
+      {/* 日期篩選 */}
+      <div className="flex gap-6 flex-wrap items-center">
+        <div>
+          <label className="text-sm font-medium">開始日期：</label>
+          <input
+            type="date"
+            value={startDate}
+            max={endDate || undefined}
+            onChange={(e) => setStartDate(e.target.value)}
+            className="border rounded px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
+          />
+        </div>
+        <div>
+          <label className="text-sm font-medium">結束日期：</label>
+          <input
+            type="date"
+            value={endDate}
+            onChange={(e) => setEndDate(e.target.value)}
+            min={startDate || undefined}
+            className="border rounded px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
+          />
+        </div>
+        <button
+          onClick={handleClear}
+          disabled={!startDate && !endDate}
+          className="bg-primary text-primary-foreground text-sm px-4 py-2 rounded disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          清除
+        </button>
+      </div>
+      {isFetching && (
+        <div className="text-sm text-muted-foreground">查詢中...</div>
+      )}
 
       {/* 列表 */}
       <div className="flex flex-col gap-2">
