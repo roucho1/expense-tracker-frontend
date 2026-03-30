@@ -21,12 +21,12 @@ export default function Navbar() {
         <Link href="/" className="font-bold text-lg">
           💰 Expense Tracker
         </Link>
-        {token && (
+        {mounted && token ? (
           <>
             <Link href="/transactions">記帳</Link>
             <Link href="/analytics">分析</Link>
           </>
-        )}
+        ) : null}
       </div>
       <div className="flex items-center gap-3">
         {mounted ? (
