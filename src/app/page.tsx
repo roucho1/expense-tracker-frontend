@@ -131,19 +131,19 @@ export default function HomePage() {
         <div className="grid grid-cols-3 gap-4">
           <div className="border rounded-lg p-4 flex flex-col gap-1">
             <span className="text-sm text-muted-foreground">收入</span>
-            <span className="text-xl font-bold text-green-500">
+            <span className="text-lg sm:text-2xl font-bold text-green-500">
               +{stats.income.toLocaleString()}
             </span>
           </div>
           <div className="border rounded-lg p-4 flex flex-col gap-1">
             <span className="text-sm text-muted-foreground">支出</span>
-            <span className="text-xl font-bold text-red-500">
+            <span className="text-lg sm:text-2xl font-bold text-red-500">
               -{stats.expense.toLocaleString()}
             </span>
           </div>
           <div className="border rounded-lg p-4 flex flex-col gap-1">
             <span className="text-sm text-muted-foreground">結餘</span>
-            <span className="text-xl font-bold">
+            <span className="text-lg sm:text-2xl font-bold">
               {stats.balance.toLocaleString()}
             </span>
           </div>
