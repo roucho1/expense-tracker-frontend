@@ -18,7 +18,7 @@ export default function Navbar() {
     setMounted(true);
   }, []);
   return (
-    <nav className="border-b-2 border-gray-300">
+    <nav className="border-b-2 border-gray-300 bg-gray-50">
       <div className="flex items-center justify-between px-6 py-4">
         {/* 左：Logo + 桌面版連結 */}
         <div className="hidden sm:flex items-center gap-3">

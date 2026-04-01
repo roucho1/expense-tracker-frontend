@@ -20,6 +20,7 @@ import WelcomeModal from "@/components/WelcomeModal";
 import { useRequireAuth } from "@/hooks/useRequireAuth";
 import { transactionApi } from "@/lib/transactionApi";
 import { categoryApi } from "@/lib/categoryApi";
+import { CircleDollarSign, ShoppingCart, Wallet } from "lucide-react";
 
 const periods = ["日", "週", "月"] as const;
 type Period = (typeof periods)[number];
@@ -76,7 +77,11 @@ export default function HomePage() {
       setCategories(categoriesRes.data);
       setAllTransactions(transactionsRes.data);
       setRecentTransactions(sortByDateDesc(transactionsRes.data).slice(0, 5));
-      if (categoriesRes.data.length === 0) setOpenWelcomeModal(true);
+      const hasShownWelcome = sessionStorage.getItem("welcomeShown");
+      if (categoriesRes.data.length === 0 && !hasShownWelcome) {
+        setOpenWelcomeModal(true);
+        sessionStorage.setItem("welcomeShown", "true");
+      }
     } catch (error) {
       if (axios.isAxiosError(error) && error.response?.status !== 401) {
         toast.error("載入失敗，請稍後再試", { duration: 5000 });
@@ -129,21 +134,39 @@ export default function HomePage() {
           </div>
         </div>
         <div className="grid grid-cols-3 gap-4">
-          <div className="border rounded-lg p-4 flex flex-col gap-1">
-            <span className="text-sm text-muted-foreground">收入</span>
+          <div className="border rounded-lg p-4 flex flex-col gap-1 bg-green-50">
+            <div className="flex items-center gap-2">
+              <CircleDollarSign size={18} className="text-green-500" />
+              <span className="text-sm text-muted-foreground">收入</span>
+            </div>
             <span className="text-lg sm:text-2xl font-bold text-green-500">
               +{stats.income.toLocaleString()}
             </span>
           </div>
-          <div className="border rounded-lg p-4 flex flex-col gap-1">
-            <span className="text-sm text-muted-foreground">支出</span>
+          <div className="border rounded-lg p-4 flex flex-col gap-1 bg-red-50">
+            <div className="flex items-center gap-2">
+              <ShoppingCart size={18} className="text-red-500" />
+              <span className="text-sm text-muted-foreground">支出</span>
+            </div>
             <span className="text-lg sm:text-2xl font-bold text-red-500">
               -{stats.expense.toLocaleString()}
             </span>
           </div>
-          <div className="border rounded-lg p-4 flex flex-col gap-1">
-            <span className="text-sm text-muted-foreground">結餘</span>
-            <span className="text-lg sm:text-2xl font-bold">
+          <div
+            className={`border rounded-lg p-4 flex flex-col gap-1 ${stats.balance >= 0 ? "bg-blue-50" : "bg-red-50"}`}
+          >
+            <div className="flex items-center gap-2">
+              <Wallet
+                size={18}
+                className={
+                  stats.balance >= 0 ? "text-blue-500" : "text-red-500"
+                }
+              />
+              <span className="text-sm text-muted-foreground">結餘</span>
+            </div>
+            <span
+              className={`text-lg sm:text-2xl font-bold ${stats.balance >= 0 ? "text-blue-500" : "text-red-500"}`}
+            >
               {stats.balance.toLocaleString()}
             </span>
           </div>
@@ -168,13 +191,13 @@ export default function HomePage() {
             </div>
           ) : recentTransactions.length === 0 ? (
             <div className="text-center text-muted-foreground py-12 text-base">
-              還沒有記帳紀錄，點擊下方新增第一筆吧！
+              📝 還沒有記帳紀錄，點擊下方新增第一筆吧！
             </div>
           ) : (
             recentTransactions.map((t) => (
               <div
                 key={t.id}
-                className="border rounded-lg px-4 py-3 flex items-center justify-between"
+                className="border rounded-lg px-4 py-3 flex items-center justify-between hover:bg-gray-50 transition-colors"
               >
                 <div className="flex flex-col gap-0.5">
                   <span className="text-sm font-medium">{t.note}</span>

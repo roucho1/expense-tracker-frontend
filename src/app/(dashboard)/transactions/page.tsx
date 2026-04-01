@@ -240,17 +240,17 @@ export default function TransactionsPage() {
           </div>
         ) : transactions.length === 0 ? (
           <div className="text-center text-muted-foreground py-12 text-base">
-            還沒有記帳紀錄，點擊右上角新增第一筆吧！
+            📝 還沒有記帳紀錄，點擊右上角新增第一筆吧！
           </div>
         ) : filtered.length === 0 ? (
           <div className="text-center text-muted-foreground py-12 text-base">
-            沒有符合條件的紀錄
+            🔍 沒有符合條件的紀錄
           </div>
         ) : (
           filtered.map((t) => (
             <div
               key={t.id}
-              className="border rounded-lg px-4 py-3 flex items-center justify-between"
+              className="border rounded-lg px-4 py-3 flex items-center justify-between hover:bg-gray-50 transition-colors"
             >
               <div className="flex flex-col gap-0.5">
                 <span className="text-sm font-medium">{t.note}</span>

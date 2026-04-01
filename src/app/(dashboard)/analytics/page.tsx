@@ -24,6 +24,7 @@ import isoWeek from "dayjs/plugin/isoWeek";
 import { useRequireAuth } from "@/hooks/useRequireAuth";
 import { categoryApi } from "@/lib/categoryApi";
 import { transactionApi } from "@/lib/transactionApi";
+import { CircleDollarSign, ShoppingCart, Wallet } from "lucide-react";
 dayjs.extend(isoWeek);
 
 // ── 型別 ──────────────────────────────────────────────
@@ -123,14 +124,23 @@ function StatCard({
   label,
   value,
   color,
+  bgColor,
+  icon,
 }: {
   label: string;
   value: number;
   color: string;
+  bgColor: string;
+  icon: React.ReactNode;
 }) {
   return (
-    <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-4">
-      <p className="text-sm text-gray-500 mb-1">{label}</p>
+    <div
+      className={`bg-white rounded-xl border border-gray-100 shadow-sm p-4 ${bgColor}`}
+    >
+      <div className="flex items-center gap-2">
+        {icon}
+        <p className="text-sm text-muted-foreground">{label}</p>
+      </div>
       <p className={`text-lg sm:text-2xl font-bold ${color}`}>
         {formatAmount(value)}
       </p>
@@ -206,7 +216,7 @@ export default function AnalyticsPage() {
   const isPie = chartType === "pie";
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen p-6">
       <div className="max-w-5xl mx-auto space-y-6">
         {/* 標題 */}
         <h1 className="text-2xl font-bold text-gray-800">收支分析</h1>
@@ -223,21 +233,32 @@ export default function AnalyticsPage() {
                 label="總收入"
                 value={totalIncome}
                 color="text-green-600"
+                bgColor="bg-green-50"
+                icon={<CircleDollarSign size={18} className="text-green-500" />}
               />
               <StatCard
                 label="總支出"
                 value={totalExpense}
                 color="text-red-500"
+                bgColor="bg-red-50"
+                icon={<ShoppingCart size={18} className="text-red-500" />}
               />
               <StatCard
                 label="淨收支"
                 value={net}
                 color={net >= 0 ? "text-blue-600" : "text-red-500"}
+                bgColor={net >= 0 ? "bg-blue-50" : "bg-red-50"}
+                icon={
+                  <Wallet
+                    size={18}
+                    className={net >= 0 ? "text-blue-500" : "text-red-500"}
+                  />
+                }
               />
             </div>
             {transactions.length === 0 ? (
               <div className="text-center text-muted-foreground py-12 text-base">
-                還沒有記帳紀錄，快去新增第一筆吧！
+                📝 還沒有記帳紀錄，快去新增第一筆吧！
               </div>
             ) : (
               <>
