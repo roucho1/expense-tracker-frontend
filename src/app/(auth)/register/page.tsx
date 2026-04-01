@@ -20,18 +20,19 @@ export default function RegisterPage() {
 
   function validate() {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
+    if (email && !emailRegex.test(email)) {
       setErrorMessage("請輸入正確的 Email 格式");
       return false;
     }
-    if (password.length < 8) {
+    if (password && password.length < 8) {
       setErrorMessage("密碼至少需要 8 個字元");
       return false;
     }
-    if (password !== confirmPassword) {
+    if (confirmPassword && password !== confirmPassword) {
       setErrorMessage("密碼不一致");
       return false;
     }
+    setErrorMessage("");
     return true;
   }
 
@@ -77,6 +78,7 @@ export default function RegisterPage() {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              onBlur={() => validate()}
               className="border rounded px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
               placeholder="you@example.com"
             />
@@ -88,6 +90,7 @@ export default function RegisterPage() {
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              onBlur={() => validate()}
               className="border rounded px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
               placeholder="••••••••"
             />
@@ -99,6 +102,7 @@ export default function RegisterPage() {
               required
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
+              onBlur={() => validate()}
               className="border rounded px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
               placeholder="••••••••"
             />

@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/dialog";
 import { TransactionForm, TransactionType } from "@/types/transaction";
 import { Category } from "@/types/category";
+import { toast } from "sonner";
 
 interface Props {
   open: boolean;
@@ -45,7 +46,7 @@ export default function TransactionModal({
   function handleSubmit(e: React.SyntheticEvent) {
     e.preventDefault();
     if (!form.amount || Number(form.amount) <= 0) {
-      alert("請輸入有效金額");
+      toast.error("請輸入有效金額", { duration: 3000 });
       return;
     }
     onSubmit(form);
@@ -135,6 +136,7 @@ export default function TransactionModal({
             <label className="text-sm font-medium">日期</label>
             <input
               type="date"
+              required
               value={form.date}
               onChange={(e) => handleChange("date", e.target.value)}
               className="border rounded px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"

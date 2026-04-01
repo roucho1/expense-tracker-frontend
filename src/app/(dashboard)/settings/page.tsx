@@ -67,7 +67,6 @@ export default function SettingsPage() {
   async function updatePassword(e: React.SyntheticEvent) {
     e.preventDefault();
     if (!validatePassword()) return;
-    setErrorMessage("");
     setIsFormSending(true);
     try {
       const res = await authApi.changePassword(oldPassword, newPassword);
@@ -130,18 +129,19 @@ export default function SettingsPage() {
   }
 
   function validatePassword() {
-    if (oldPassword === newPassword) {
+    if (oldPassword && newPassword && oldPassword === newPassword) {
       setErrorMessage("新密碼不能與舊密碼相同");
       return false;
     }
-    if (newPassword.length < 8) {
+    if (newPassword && newPassword.length < 8) {
       setErrorMessage("密碼至少需要 8 個字元");
       return false;
     }
-    if (newPassword !== confirmPassword) {
+    if (newPassword && confirmPassword && newPassword !== confirmPassword) {
       setErrorMessage("密碼不一致");
       return false;
     }
+    setErrorMessage("");
     return true;
   }
 
@@ -185,6 +185,7 @@ export default function SettingsPage() {
                       type="password"
                       required
                       value={oldPassword}
+                      onBlur={() => validatePassword()}
                       onChange={(e) => setOldPassword(e.target.value)}
                       className="border rounded px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
                       placeholder="••••••••"
@@ -196,6 +197,7 @@ export default function SettingsPage() {
                       type="password"
                       required
                       value={newPassword}
+                      onBlur={() => validatePassword()}
                       onChange={(e) => setNewPassword(e.target.value)}
                       className="border rounded px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
                       placeholder="••••••••"
@@ -207,6 +209,7 @@ export default function SettingsPage() {
                       type="password"
                       required
                       value={confirmPassword}
+                      onBlur={() => validatePassword()}
                       onChange={(e) => setConfirmPassword(e.target.value)}
                       className="border rounded px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
                       placeholder="••••••••"

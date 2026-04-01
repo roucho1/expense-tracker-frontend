@@ -25,6 +25,7 @@ export default function LoginPage() {
       setErrorMessage("請輸入正確的 Email 格式");
       return false;
     }
+    setErrorMessage("");
     return true;
   }
 
@@ -69,6 +70,7 @@ export default function LoginPage() {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              onBlur={() => validate()}
               className="border rounded px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
               placeholder="you@example.com"
             />
