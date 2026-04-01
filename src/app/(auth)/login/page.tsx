@@ -16,6 +16,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [isValid, setIsValid] = useState(false);
 
   useRedirectIfAuth();
 
@@ -23,9 +24,11 @@ export default function LoginPage() {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       setErrorMessage("請輸入正確的 Email 格式");
+      setIsValid(false);
       return false;
     }
     setErrorMessage("");
+    setIsValid(true);
     return true;
   }
 
@@ -90,7 +93,7 @@ export default function LoginPage() {
             <p className="text-red-500 text-sm">{errorMessage}</p>
           )}
           <button
-            disabled={isLoading || !email || !password}
+            disabled={isLoading || !email || !password || !isValid}
             type="submit"
             className="bg-primary text-primary-foreground rounded py-2 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
           >

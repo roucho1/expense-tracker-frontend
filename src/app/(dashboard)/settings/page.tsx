@@ -35,6 +35,7 @@ export default function SettingsPage() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isFormSending, setIsFormSending] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [isValid, setIsValid] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editingName, setEditingName] = useState<string>();
@@ -131,17 +132,21 @@ export default function SettingsPage() {
   function validatePassword() {
     if (oldPassword && newPassword && oldPassword === newPassword) {
       setErrorMessage("新密碼不能與舊密碼相同");
+      setIsValid(false);
       return false;
     }
     if (newPassword && newPassword.length < 8) {
       setErrorMessage("密碼至少需要 8 個字元");
+      setIsValid(false);
       return false;
     }
     if (newPassword && confirmPassword && newPassword !== confirmPassword) {
       setErrorMessage("密碼不一致");
+      setIsValid(false);
       return false;
     }
     setErrorMessage("");
+    setIsValid(true);
     return true;
   }
 
@@ -219,7 +224,13 @@ export default function SettingsPage() {
                     <p className="text-red-500 text-sm">{errorMessage}</p>
                   )}
                   <button
-                    disabled={isFormSending || !oldPassword || !newPassword}
+                    disabled={
+                      isFormSending ||
+                      !oldPassword ||
+                      !newPassword ||
+                      !confirmPassword ||
+                      !isValid
+                    }
                     type="submit"
                     className="bg-primary text-primary-foreground rounded px-4 py-2 text-sm font-medium w-fit disabled:opacity-50 disabled:cursor-not-allowed"
                   >

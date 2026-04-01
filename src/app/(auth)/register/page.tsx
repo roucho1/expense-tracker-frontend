@@ -15,6 +15,7 @@ export default function RegisterPage() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [isValid, setIsValid] = useState(false);
 
   useRedirectIfAuth();
 
@@ -22,17 +23,21 @@ export default function RegisterPage() {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (email && !emailRegex.test(email)) {
       setErrorMessage("請輸入正確的 Email 格式");
+      setIsValid(false);
       return false;
     }
     if (password && password.length < 8) {
       setErrorMessage("密碼至少需要 8 個字元");
+      setIsValid(false);
       return false;
     }
     if (confirmPassword && password !== confirmPassword) {
       setErrorMessage("密碼不一致");
+      setIsValid(false);
       return false;
     }
     setErrorMessage("");
+    setIsValid(true);
     return true;
   }
 
@@ -111,7 +116,9 @@ export default function RegisterPage() {
             <p className="text-red-500 text-sm">{errorMessage}</p>
           )}
           <button
-            disabled={isLoading || !email || !password || !confirmPassword}
+            disabled={
+              isLoading || !email || !password || !confirmPassword || !isValid
+            }
             type="submit"
             className="bg-primary text-primary-foreground rounded py-2 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
           >
