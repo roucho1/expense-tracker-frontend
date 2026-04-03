@@ -291,7 +291,7 @@ export default function TransactionsPage() {
           filtered.map((t) => (
             <div
               key={t.id}
-              className="border rounded-lg px-4 py-3 flex items-center justify-between hover:bg-gray-50 transition-colors"
+              className="border rounded-lg px-4 py-3 flex items-center justify-between hover:bg-primary/5 transition-colors"
             >
               <div className="flex flex-col gap-0.5">
                 <span className="text-sm font-medium">{t.note}</span>

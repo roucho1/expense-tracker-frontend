@@ -272,7 +272,7 @@ export default function SettingsPage() {
               {categories.map((c) => (
                 <div
                   key={c.id}
-                  className="flex items-center justify-between px-4 py-3"
+                  className="flex items-center justify-between px-4 py-3 hover:bg-primary/5"
                 >
                   <div className="flex items-center gap-3">
                     {editingId === c.id ? (
