@@ -25,6 +25,7 @@ import {
 import { useRequireAuth } from "@/hooks/useRequireAuth";
 import { categoryApi } from "@/lib/categoryApi";
 import { transactionApi } from "@/lib/transactionApi";
+import { Download } from "lucide-react";
 
 export default function TransactionsPage() {
   useRequireAuth();
@@ -135,6 +136,36 @@ export default function TransactionsPage() {
     setEndDate("");
   }
 
+  function exportToCSV() {
+    // 1. 定義欄位標題
+    const headers = ["日期", "類型", "分類", "備註", "金額"];
+
+    // 2. 把資料轉成陣列
+    const rows = transactions.map((t) => [
+      t.date,
+      t.type === "income" ? "收入" : "支出",
+      categories.find((c) => c.id === t.category_id)?.name ?? "未分類",
+      `"${t.note}"`, // 避免備註逗號被拆開
+      t.amount,
+    ]);
+
+    // 3. 組合成 CSV 字串
+    const csvContent = [headers, ...rows]
+      .map((row) => row.join(","))
+      .join("\n");
+
+    // 4. 建立下載連結
+    const blob = new Blob(["\uFEFF" + csvContent], {
+      type: "text/csv;charset=utf-8;",
+    });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "記帳紀錄.csv";
+    link.click();
+    URL.revokeObjectURL(url);
+  }
+
   return (
     <div className="max-w-5xl mx-auto px-4 py-8 flex flex-col gap-6">
       {/* 標題 + 新增按鈕 */}
@@ -149,19 +180,29 @@ export default function TransactionsPage() {
       </div>
 
       {/* 篩選：收支類型 */}
-      <div className="flex border rounded overflow-hidden text-sm w-fit">
-        {(["all", "income", "expense"] as const).map((f) => (
-          <button
-            key={f}
-            onClick={() => {
-              setFilter(f);
-              setCategoryFilter(null);
-            }}
-            className={`px-4 py-1.5 ${filter === f ? "bg-primary text-primary-foreground" : ""}`}
-          >
-            {f === "all" ? "全部" : f === "income" ? "收入" : "支出"}
-          </button>
-        ))}
+      <div className="flex items-center justify-between">
+        <div className="border rounded overflow-hidden text-sm">
+          {(["all", "income", "expense"] as const).map((f) => (
+            <button
+              key={f}
+              onClick={() => {
+                setFilter(f);
+                setCategoryFilter(null);
+              }}
+              className={`px-4 py-1.5 ${filter === f ? "bg-primary text-primary-foreground" : ""}`}
+            >
+              {f === "all" ? "全部" : f === "income" ? "收入" : "支出"}
+            </button>
+          ))}
+        </div>
+        <button
+          onClick={() => exportToCSV()}
+          className="border rounded px-3 py-2 text-sm flex items-center gap-1 hover:bg-gray-50"
+        >
+          <Download size={16} />
+          <span className="sm:hidden">匯出</span>
+          <span className="hidden sm:inline">匯出 CSV</span>
+        </button>
       </div>
 
       {/* 篩選：分類 */}
