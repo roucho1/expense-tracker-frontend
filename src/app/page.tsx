@@ -133,44 +133,50 @@ export default function HomePage() {
             ))}
           </div>
         </div>
-        <div className="grid grid-cols-3 gap-4">
-          <div className="border rounded-lg p-4 flex flex-col gap-1 bg-green-50">
-            <div className="flex items-center gap-2">
-              <CircleDollarSign size={18} className="text-green-500" />
-              <span className="text-sm text-muted-foreground">收入</span>
-            </div>
-            <span className="text-lg sm:text-2xl font-bold text-green-500">
-              +{stats.income.toLocaleString()}
-            </span>
+        {isLoading ? (
+          <div className="text-center text-muted-foreground py-12 text-base">
+            載入中...
           </div>
-          <div className="border rounded-lg p-4 flex flex-col gap-1 bg-red-50">
-            <div className="flex items-center gap-2">
-              <ShoppingCart size={18} className="text-red-500" />
-              <span className="text-sm text-muted-foreground">支出</span>
+        ) : (
+          <div className="grid grid-cols-3 gap-4">
+            <div className="border rounded-lg p-4 flex flex-col gap-1 bg-green-50">
+              <div className="flex items-center gap-2">
+                <CircleDollarSign size={18} className="text-green-500" />
+                <span className="text-sm text-muted-foreground">收入</span>
+              </div>
+              <span className="text-lg sm:text-2xl font-bold text-green-500">
+                +{stats.income.toLocaleString()}
+              </span>
             </div>
-            <span className="text-lg sm:text-2xl font-bold text-red-500">
-              -{stats.expense.toLocaleString()}
-            </span>
-          </div>
-          <div
-            className={`border rounded-lg p-4 flex flex-col gap-1 ${stats.balance >= 0 ? "bg-blue-50" : "bg-red-50"}`}
-          >
-            <div className="flex items-center gap-2">
-              <Wallet
-                size={18}
-                className={
-                  stats.balance >= 0 ? "text-blue-500" : "text-red-500"
-                }
-              />
-              <span className="text-sm text-muted-foreground">結餘</span>
+            <div className="border rounded-lg p-4 flex flex-col gap-1 bg-red-50">
+              <div className="flex items-center gap-2">
+                <ShoppingCart size={18} className="text-red-500" />
+                <span className="text-sm text-muted-foreground">支出</span>
+              </div>
+              <span className="text-lg sm:text-2xl font-bold text-red-500">
+                -{stats.expense.toLocaleString()}
+              </span>
             </div>
-            <span
-              className={`text-lg sm:text-2xl font-bold ${stats.balance >= 0 ? "text-blue-500" : "text-red-500"}`}
+            <div
+              className={`border rounded-lg p-4 flex flex-col gap-1 ${stats.balance >= 0 ? "bg-blue-50" : "bg-red-50"}`}
             >
-              {stats.balance.toLocaleString()}
-            </span>
+              <div className="flex items-center gap-2">
+                <Wallet
+                  size={18}
+                  className={
+                    stats.balance >= 0 ? "text-blue-500" : "text-red-500"
+                  }
+                />
+                <span className="text-sm text-muted-foreground">結餘</span>
+              </div>
+              <span
+                className={`text-lg sm:text-2xl font-bold ${stats.balance >= 0 ? "text-blue-500" : "text-red-500"}`}
+              >
+                {stats.balance.toLocaleString()}
+              </span>
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
       {/* 最近紀錄 */}
