@@ -181,7 +181,7 @@ export default function TransactionsPage() {
 
       {/* 篩選：收支類型 */}
       <div className="flex items-center justify-between">
-        <div className="border rounded overflow-hidden text-sm">
+        <div className="border border-primary rounded overflow-hidden text-sm">
           {(["all", "income", "expense"] as const).map((f) => (
             <button
               key={f}
@@ -197,7 +197,7 @@ export default function TransactionsPage() {
         </div>
         <button
           onClick={() => exportToCSV()}
-          className="border rounded px-3 py-2 text-sm flex items-center gap-1 hover:bg-gray-50"
+          className="border border-primary text-primary rounded px-3 py-2 text-sm flex items-center gap-1 hover:bg-primary/10"
         >
           <Download size={16} />
           <span className="sm:hidden">匯出</span>
@@ -209,7 +209,7 @@ export default function TransactionsPage() {
       <div className="flex gap-2 flex-wrap">
         <button
           onClick={() => setCategoryFilter(null)}
-          className={`text-sm px-3 py-1 rounded-full border ${
+          className={`text-sm px-3 py-1 rounded-full border border-primary ${
             categoryFilter === null ? "bg-primary text-primary-foreground" : ""
           }`}
         >
@@ -217,7 +217,7 @@ export default function TransactionsPage() {
         </button>
         <button
           onClick={() => setCategoryFilter(0)}
-          className={`text-sm px-3 py-1 rounded-full border ${
+          className={`text-sm px-3 py-1 rounded-full border border-primary ${
             categoryFilter === 0 ? "bg-primary text-primary-foreground" : ""
           }`}
         >
@@ -229,7 +229,7 @@ export default function TransactionsPage() {
             <button
               key={c.id}
               onClick={() => setCategoryFilter(c.id)}
-              className={`text-sm px-3 py-1 rounded-full border ${
+              className={`text-sm px-3 py-1 rounded-full border border-primary ${
                 categoryFilter === c.id
                   ? "bg-primary text-primary-foreground"
                   : ""
@@ -316,7 +316,7 @@ export default function TransactionsPage() {
                 </button>
                 <button
                   onClick={() => setDeletingId(t.id)}
-                  className="text-xs text-red-400 hover:text-red-600"
+                  className="text-xs text-destructive/80 hover:text-destructive"
                 >
                   刪除
                 </button>
@@ -365,7 +365,7 @@ export default function TransactionsPage() {
           <AlertDialogFooter>
             <AlertDialogCancel>取消</AlertDialogCancel>
             <AlertDialogAction
-              className="bg-red-500 hover:bg-red-600 text-white"
+              className="bg-destructive! hover:bg-destructive/80! text-destructive-foreground!"
               onClick={async () =>
                 deletingId && (await deleteTransaction(deletingId))
               }

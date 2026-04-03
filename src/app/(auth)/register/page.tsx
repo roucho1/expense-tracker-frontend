@@ -113,7 +113,7 @@ export default function RegisterPage() {
             />
           </div>
           {errorMessage && (
-            <p className="text-red-500 text-sm">{errorMessage}</p>
+            <p className="text-destructive text-sm">{errorMessage}</p>
           )}
           <button
             disabled={

@@ -90,7 +90,7 @@ export default function LoginPage() {
             />
           </div>
           {errorMessage && (
-            <p className="text-red-500 text-sm">{errorMessage}</p>
+            <p className="text-destructive text-sm">{errorMessage}</p>
           )}
           <button
             disabled={isLoading || !email || !password || !isValid}

@@ -221,7 +221,7 @@ export default function SettingsPage() {
                     />
                   </div>
                   {errorMessage && (
-                    <p className="text-red-500 text-sm">{errorMessage}</p>
+                    <p className="text-destructive text-sm">{errorMessage}</p>
                   )}
                   <button
                     disabled={
@@ -323,7 +323,7 @@ export default function SettingsPage() {
                           });
                         }}
                         disabled={!editingName}
-                        className="text-xs text-muted-foreground hover:text-foreground disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="text-xs text-primary hover:text-primary/80 disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         儲存
                       </button>
@@ -340,7 +340,7 @@ export default function SettingsPage() {
                     </button>
                     <button
                       onClick={() => setDeletingId(c.id)}
-                      className="text-xs text-red-400 hover:text-red-600"
+                      className="text-xs text-destructive/80 hover:text-destructive"
                     >
                       刪除
                     </button>
@@ -373,7 +373,7 @@ export default function SettingsPage() {
           <AlertDialogFooter>
             <AlertDialogCancel>取消</AlertDialogCancel>
             <AlertDialogAction
-              className="bg-red-500 hover:bg-red-600 text-white"
+              className="bg-destructive! hover:bg-destructive/80! text-destructive-foreground!"
               onClick={async () =>
                 deletingId && (await deleteCategory(deletingId))
               }
