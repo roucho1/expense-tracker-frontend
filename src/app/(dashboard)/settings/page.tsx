@@ -157,7 +157,7 @@ export default function SettingsPage() {
           <h2 className="font-semibold text-lg">使用者資訊</h2>
         </div>
         {/* 使用者資訊card */}
-        <div className="border rounded-lg px-4 py-3 flex flex-col gap-2">
+        <div className="border rounded-lg shadow-sm px-4 py-3 flex flex-col gap-2">
           {isUserLoading ? (
             <div className="text-center text-muted-foreground py-12 text-base">
               載入中...
@@ -257,7 +257,7 @@ export default function SettingsPage() {
           </div>
         </div>
 
-        <div className="border rounded-lg flex flex-col divide-y">
+        <div className="border rounded-lg shadow-sm flex flex-col divide-y">
           {isCategoryLoading ? (
             <div className="text-center text-muted-foreground py-12 text-base">
               載入中...

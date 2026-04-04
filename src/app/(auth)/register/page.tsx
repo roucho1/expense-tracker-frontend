@@ -65,7 +65,7 @@ export default function RegisterPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center">
-      <div className="w-full max-w-sm border rounded-lg p-8 flex flex-col gap-6">
+      <div className="w-full max-w-sm border rounded-lg shadow-sm p-8 flex flex-col gap-6">
         <div>
           <h1 className="text-2xl font-bold">註冊</h1>
           <p className="text-sm text-muted-foreground mt-1">

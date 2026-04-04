@@ -181,7 +181,7 @@ export default function TransactionsPage() {
 
       {/* 篩選：收支類型 */}
       <div className="flex items-center justify-between">
-        <div className="border border-primary rounded overflow-hidden text-sm">
+        <div className="border border-primary/50 rounded overflow-hidden text-sm">
           {(["all", "income", "expense"] as const).map((f) => (
             <button
               key={f}
@@ -209,7 +209,7 @@ export default function TransactionsPage() {
       <div className="flex gap-2 flex-wrap">
         <button
           onClick={() => setCategoryFilter(null)}
-          className={`text-sm px-3 py-1 rounded-full border border-primary ${
+          className={`text-sm px-3 py-1 rounded-full border border-primary/50 ${
             categoryFilter === null ? "bg-primary text-primary-foreground" : ""
           }`}
         >
@@ -217,7 +217,7 @@ export default function TransactionsPage() {
         </button>
         <button
           onClick={() => setCategoryFilter(0)}
-          className={`text-sm px-3 py-1 rounded-full border border-primary ${
+          className={`text-sm px-3 py-1 rounded-full border border-primary/50 ${
             categoryFilter === 0 ? "bg-primary text-primary-foreground" : ""
           }`}
         >
@@ -229,7 +229,7 @@ export default function TransactionsPage() {
             <button
               key={c.id}
               onClick={() => setCategoryFilter(c.id)}
-              className={`text-sm px-3 py-1 rounded-full border border-primary ${
+              className={`text-sm px-3 py-1 rounded-full border border-primary/50 ${
                 categoryFilter === c.id
                   ? "bg-primary text-primary-foreground"
                   : ""
@@ -291,7 +291,7 @@ export default function TransactionsPage() {
           filtered.map((t) => (
             <div
               key={t.id}
-              className="border rounded-lg px-4 py-3 flex items-center justify-between hover:bg-primary/5 transition-colors"
+              className="border rounded-lg shadow-sm px-4 py-3 flex items-center justify-between hover:bg-primary/5 transition-colors"
             >
               <div className="flex flex-col gap-0.5">
                 <span className="text-sm font-medium">{t.note}</span>

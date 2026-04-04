@@ -15,7 +15,7 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
-import { Transaction, sortByDateAsc } from "@/types/transaction";
+import { Transaction } from "@/types/transaction";
 import { Category } from "@/types/category";
 import axios from "axios";
 import { toast } from "sonner";
@@ -25,99 +25,17 @@ import { useRequireAuth } from "@/hooks/useRequireAuth";
 import { categoryApi } from "@/lib/categoryApi";
 import { transactionApi } from "@/lib/transactionApi";
 import { CircleDollarSign, ShoppingCart, Wallet } from "lucide-react";
+import {
+  aggregateByCategory,
+  aggregateByPeriod,
+  ChartType,
+  CustomTooltip,
+  formatAmount,
+  PIE_COLORS,
+  PieTooltip,
+  TimePeriod,
+} from "@/lib/chartUtils";
 dayjs.extend(isoWeek);
-
-// ── 型別 ──────────────────────────────────────────────
-type ChartType = "bar" | "line" | "pie";
-type TimePeriod = "day" | "week" | "month";
-//圓餅圖基本色
-const PIE_COLORS = [
-  "#f97316",
-  "#3b82f6",
-  "#a855f7",
-  "#22c55e",
-  "#94a3b8",
-  "#ec4899",
-];
-
-// ── 工具函式 ──────────────────────────────────────────
-function formatAmount(n: number) {
-  return `$${n.toLocaleString()}`;
-}
-
-/** 把 date string 轉成對應的 label */
-function getLabel(date: string, period: TimePeriod): string {
-  const d = dayjs(date);
-  if (period === "day") return d.format("MM-DD");
-  if (period === "month") return `${d.month() + 1}月`;
-  return `第${d.isoWeek()}週`;
-}
-
-/** 依時間維度彙整收支 */
-function aggregateByPeriod(transactions: Transaction[], period: TimePeriod) {
-  const map = new Map<
-    string,
-    { income: number; expense: number; net: number }
-  >();
-
-  const sorted = sortByDateAsc(transactions);
-  sorted.forEach((t) => {
-    const label = getLabel(t.date, period);
-    const current = map.get(label) ?? { income: 0, expense: 0, net: 0 };
-    if (t.type === "income") {
-      current.income += t.amount;
-      current.net += t.amount;
-    } else {
-      current.expense += t.amount;
-      current.net -= t.amount;
-    }
-    map.set(label, current);
-  });
-
-  return Array.from(map.entries()).map(([label, v]) => ({ label, ...v }));
-}
-
-/** 依分類彙整支出（給圓餅圖用） */
-function aggregateByCategory(
-  transactions: Transaction[],
-  categories: Category[],
-) {
-  const map = new Map<string, number>();
-  transactions
-    .filter((t) => t.type === "expense")
-    .forEach((t) => {
-      const name =
-        categories.find((c) => c.id === t.category_id)?.name ?? "未分類";
-      map.set(name, (map.get(name) ?? 0) + t.amount);
-    });
-  return Array.from(map.entries()).map(([name, value]) => ({ name, value }));
-}
-
-// ── 自訂 Tooltip ──────────────────────────────────────
-function CustomTooltip({ active, payload, label }: any) {
-  if (!active || !payload?.length) return null;
-  return (
-    <div className="bg-background border border-border rounded-lg shadow-lg p-3 text-sm">
-      <p className="font-semibold text-foreground mb-1">{label}</p>
-      {payload.map((entry: any) => (
-        <p key={entry.name} style={{ color: entry.color }}>
-          {entry.name}：{formatAmount(entry.value)}
-        </p>
-      ))}
-    </div>
-  );
-}
-
-function PieTooltip({ active, payload }: any) {
-  if (!active || !payload?.length) return null;
-  const { name, value } = payload[0];
-  return (
-    <div className="bg-background border border-border rounded-lg shadow-lg p-3 text-sm">
-      <p className="font-semibold text-foreground">{name}</p>
-      <p className="text-muted-foreground">{formatAmount(value)}</p>
-    </div>
-  );
-}
 
 // ── 統計卡片 ──────────────────────────────────────────
 function StatCard({
@@ -134,9 +52,7 @@ function StatCard({
   icon: React.ReactNode;
 }) {
   return (
-    <div
-      className={`rounded-xl border border-gray-100 shadow-sm p-4 ${bgColor}`}
-    >
+    <div className={`rounded-xl border shadow-sm p-4 ${bgColor}`}>
       <div className="flex items-center gap-2">
         {icon}
         <p className="text-sm text-muted-foreground">{label}</p>
@@ -262,11 +178,11 @@ export default function AnalyticsPage() {
           ) : (
             <>
               {/* 圖表區 */}
-              <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6 flex flex-col gap-4">
+              <div className="rounded-xl border shadow-sm p-6 flex flex-col gap-4">
                 {/* 控制列 */}
                 <div className="flex flex-wrap gap-3 items-center justify-between">
                   {/* 圖表類型 */}
-                  <div className="flex gap-1 bg-gray-100 rounded-lg p-1">
+                  <div className="flex gap-1 bg-primary/10 rounded-lg p-1">
                     {(["bar", "line", "pie"] as ChartType[]).map((type) => {
                       const labels = {
                         bar: "長條圖",
@@ -279,7 +195,7 @@ export default function AnalyticsPage() {
                           onClick={() => setChartType(type)}
                           className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all ${
                             chartType === type
-                              ? "bg-white shadow text-gray-800"
+                              ? "bg-primary shadow text-primary-foreground"
                               : "text-gray-500 hover:text-gray-700"
                           }`}
                         >
@@ -291,7 +207,7 @@ export default function AnalyticsPage() {
 
                   {/* 時間維度（圓餅圖時隱藏） */}
                   {!isPie && (
-                    <div className="flex gap-1 bg-gray-100 rounded-lg p-1">
+                    <div className="flex gap-1 bg-primary/10 rounded-lg p-1">
                       {(["day", "week", "month"] as TimePeriod[]).map((p) => {
                         const labels = { day: "日", week: "週", month: "月" };
                         return (
@@ -300,7 +216,7 @@ export default function AnalyticsPage() {
                             onClick={() => setPeriod(p)}
                             className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all ${
                               period === p
-                                ? "bg-white shadow text-gray-800"
+                                ? "bg-primary shadow text-primary-foreground"
                                 : "text-gray-500 hover:text-gray-700"
                             }`}
                           >
@@ -405,7 +321,7 @@ export default function AnalyticsPage() {
               </div>
 
               {/* 分類明細表 */}
-              <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6">
+              <div className="rounded-xl border shadow-sm p-6">
                 <h2 className="text-base font-semibold text-gray-700 mb-4">
                   支出分類明細
                 </h2>
