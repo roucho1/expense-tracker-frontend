@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-export default function ButtomNav() {
+export default function BottomNav() {
   const { token, clearToken } = useAuthStore();
   const [mounted, setMounted] = useState(false);
 
