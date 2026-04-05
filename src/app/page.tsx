@@ -143,7 +143,7 @@ export default function HomePage() {
   }
 
   return (
-    <div className="max-w-5xl mx-auto px-4 py-8 flex flex-col gap-8">
+    <div className="max-w-5xl mx-auto px-4 py-8 flex flex-col gap-8 pb-20 sm:pb-0">
       {/* 統計卡片 */}
       <div className="grid grid-cols-1 gap-4">
         <div className="flex items-center justify-between">

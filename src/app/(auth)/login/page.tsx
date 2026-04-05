@@ -22,7 +22,7 @@ export default function LoginPage() {
 
   function validate() {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
+    if (email && !emailRegex.test(email)) {
       setErrorMessage("請輸入正確的 Email 格式");
       setIsValid(false);
       return false;
@@ -55,51 +55,57 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center">
-      <div className="w-full max-w-sm border rounded-lg shadow-sm p-8 flex flex-col gap-6">
-        <div>
-          <h1 className="text-2xl font-bold">登入</h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            還沒有帳號？
-            <Link href="/register" className="underline">
-              註冊
-            </Link>
-          </p>
+      <div className="w-full max-w-sm flex flex-col gap-4">
+        <div className="sm:hidden text-center">
+          <div className="text-5xl mb-2">💰</div>
+          <span className="text-xl font-bold">Expense Tracker</span>
         </div>
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          <div className="flex flex-col gap-1.5">
-            <label className="text-sm font-medium">Email</label>
-            <input
-              type="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              onBlur={() => validate()}
-              className="border rounded px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
-              placeholder="you@example.com"
-            />
+        <div className="border rounded-lg shadow-sm p-8 flex flex-col gap-6">
+          <div>
+            <h1 className="text-2xl font-bold">登入</h1>
+            <p className="text-sm text-muted-foreground mt-1">
+              還沒有帳號？
+              <Link href="/register" className="underline">
+                註冊
+              </Link>
+            </p>
           </div>
-          <div className="flex flex-col gap-1.5">
-            <label className="text-sm font-medium">密碼</label>
-            <input
-              type="password"
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="border rounded px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
-              placeholder="••••••••"
-            />
-          </div>
-          {errorMessage && (
-            <p className="text-destructive text-sm">{errorMessage}</p>
-          )}
-          <button
-            disabled={isLoading || !email || !password || !isValid}
-            type="submit"
-            className="bg-primary text-primary-foreground rounded py-2 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {isLoading ? "登入中..." : "登入"}
-          </button>
-        </form>
+          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+            <div className="flex flex-col gap-1.5">
+              <label className="text-sm font-medium">Email</label>
+              <input
+                type="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                onBlur={() => validate()}
+                className="border rounded px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
+                placeholder="you@example.com"
+              />
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <label className="text-sm font-medium">密碼</label>
+              <input
+                type="password"
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="border rounded px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
+                placeholder="••••••••"
+              />
+            </div>
+            {errorMessage && (
+              <p className="text-destructive text-sm">{errorMessage}</p>
+            )}
+            <button
+              disabled={isLoading || !email || !password || !isValid}
+              type="submit"
+              className="bg-primary text-primary-foreground rounded py-2 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isLoading ? "登入中..." : "登入"}
+            </button>
+          </form>
+        </div>
       </div>
     </div>
   );

@@ -132,7 +132,7 @@ export default function AnalyticsPage() {
   const isPie = chartType === "pie";
 
   return (
-    <div className="max-w-5xl mx-auto px-4 py-8 flex flex-col gap-6">
+    <div className="max-w-5xl mx-auto px-4 py-8 flex flex-col gap-6 pb-20 sm:pb-0">
       {/* 標題 */}
       <h1 className="text-xl font-bold">收支分析</h1>
 
