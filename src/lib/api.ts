@@ -19,6 +19,7 @@ api.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401) {
       if (window.location.pathname === "/login") return Promise.reject(error);
+      localStorage.removeItem("token");
       toast.error("登入已過期，請重新登入", { duration: 3000 });
       setTimeout(() => {
         window.location.href = "/login";
