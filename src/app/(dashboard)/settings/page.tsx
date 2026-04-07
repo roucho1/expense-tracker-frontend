@@ -22,9 +22,11 @@ import { TransactionType } from "@/types/transaction";
 import { useRequireAuth } from "@/hooks/useRequireAuth";
 import { categoryApi } from "@/lib/categoryApi";
 import { authApi } from "@/lib/authApi";
+import { useTheme } from "next-themes";
 
 export default function SettingsPage() {
   useRequireAuth();
+  const { theme, setTheme } = useTheme();
   const [isExpand, setIsExpand] = useState(false);
   const [isUserLoading, setIsUserLoading] = useState(true);
   const [isCategoryLoading, setIsCategoryLoading] = useState(true);
@@ -154,89 +156,121 @@ export default function SettingsPage() {
     <div className="max-w-5xl mx-auto px-4 py-8 flex flex-col gap-8 pb-20 sm:pb-0">
       <div>
         <div className="flex items-center justify-between mb-4">
-          <h2 className="font-semibold text-lg">使用者資訊</h2>
+          <h2 className="font-semibold text-lg">使用者設定</h2>
         </div>
-        {/* 使用者資訊card */}
-        <div className="border rounded-lg shadow-sm px-4 py-3 flex flex-col gap-2">
+        {/* 使用者設定card */}
+        <div className="border rounded-lg shadow-sm px-4 py-3 flex flex-col gap-4">
           {isUserLoading ? (
             <div className="text-center text-muted-foreground py-12 text-base">
               載入中...
             </div>
           ) : (
             <>
-              <div>
-                <span className="font-bold">帳號：</span>
-                <span>{user?.email}</span>
+              {/* 使用者資訊 */}
+              <div className="flex flex-col gap-1">
+                <div>
+                  <span className="font-bold">帳號：</span>
+                  <span>{user?.email}</span>
+                </div>
+                <div>
+                  <span className="font-bold">註冊時間：</span>
+                  <span>
+                    {dayjs(user?.created_at).format("YYYY年MM月DD日")}
+                  </span>
+                </div>
               </div>
-              <div>
-                <span className="font-bold">註冊時間：</span>
-                <span>{dayjs(user?.created_at).format("YYYY年MM月DD日")}</span>
+
+              {/* 色系選擇 */}
+              <div className="flex flex-col gap-1">
+                <span className="font-bold">顯示模式</span>
+                <div className="flex gap-2.5">
+                  {["light", "dark", "system"].map((t) => (
+                    <label key={t} className="flex items-center gap-1">
+                      <input
+                        type="radio"
+                        value={t}
+                        checked={theme === t}
+                        onChange={() => setTheme(t)}
+                      />
+                      {t === "light"
+                        ? "☀️淺色"
+                        : t === "dark"
+                          ? "🌙深色"
+                          : "⚙️跟隨系統顏色"}
+                    </label>
+                  ))}
+                </div>
               </div>
-              <div>
+
+              {/* 修改密碼 */}
+              <div className="flex flex-col">
                 <button
                   onClick={() => setIsExpand(!isExpand)}
-                  className="bg-primary text-primary-foreground text-sm px-4 py-2 rounded"
+                  className={`${isExpand ? "border border-primary text-primary" : "bg-primary text-primary-foreground"} text-sm px-4 py-2 rounded w-fit`}
                 >
                   {!isExpand ? "修改密碼" : "取消修改"}
                 </button>
-              </div>
-              <div
-                className={`p-2 overflow-hidden transition-all duration-300 ${isExpand ? "max-h-96 opacity-100" : "max-h-0 opacity-0"}`}
-              >
-                <form onSubmit={updatePassword} className="flex flex-col gap-4">
-                  <div className="flex flex-col gap-1.5">
-                    <label className="text-sm font-medium">舊密碼</label>
-                    <input
-                      type="password"
-                      required
-                      value={oldPassword}
-                      onBlur={() => validatePassword()}
-                      onChange={(e) => setOldPassword(e.target.value)}
-                      className="border rounded px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
-                      placeholder="••••••••"
-                    />
-                  </div>
-                  <div className="flex flex-col gap-1.5">
-                    <label className="text-sm font-medium">新密碼</label>
-                    <input
-                      type="password"
-                      required
-                      value={newPassword}
-                      onBlur={() => validatePassword()}
-                      onChange={(e) => setNewPassword(e.target.value)}
-                      className="border rounded px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
-                      placeholder="••••••••"
-                    />
-                  </div>
-                  <div className="flex flex-col gap-1.5">
-                    <label className="text-sm font-medium">確認密碼</label>
-                    <input
-                      type="password"
-                      required
-                      value={confirmPassword}
-                      onBlur={() => validatePassword()}
-                      onChange={(e) => setConfirmPassword(e.target.value)}
-                      className="border rounded px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
-                      placeholder="••••••••"
-                    />
-                  </div>
-                  {errorMessage && (
-                    <p className="text-destructive text-sm">{errorMessage}</p>
-                  )}
-                  <button
-                    disabled={
-                      isFormSending ||
-                      !oldPassword ||
-                      !newPassword ||
-                      !confirmPassword ||
-                      !isValid
-                    }
-                    type="submit"
-                    className="bg-primary text-primary-foreground rounded px-4 py-2 text-sm font-medium w-fit disabled:opacity-50 disabled:cursor-not-allowed"
+                <div
+                  className={`overflow-hidden transition-all duration-300 ${isExpand ? "max-h-96 opacity-100 mt-3" : "max-h-0 opacity-0"}`}
+                >
+                  <form
+                    onSubmit={updatePassword}
+                    className="flex flex-col gap-4 w-full max-w-60 px-0.5"
                   >
-                    {isFormSending ? "修改中..." : "送出"}
-                  </button>
-                </form>
+                    <div className="flex flex-col gap-1.5">
+                      <label className="text-sm font-medium">舊密碼</label>
+                      <input
+                        type="password"
+                        required
+                        value={oldPassword}
+                        onBlur={() => validatePassword()}
+                        onChange={(e) => setOldPassword(e.target.value)}
+                        className="border rounded px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
+                        placeholder="••••••••"
+                      />
+                    </div>
+                    <div className="flex flex-col gap-1.5">
+                      <label className="text-sm font-medium">新密碼</label>
+                      <input
+                        type="password"
+                        required
+                        value={newPassword}
+                        onBlur={() => validatePassword()}
+                        onChange={(e) => setNewPassword(e.target.value)}
+                        className="border rounded px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
+                        placeholder="••••••••"
+                      />
+                    </div>
+                    <div className="flex flex-col gap-1.5">
+                      <label className="text-sm font-medium">確認密碼</label>
+                      <input
+                        type="password"
+                        required
+                        value={confirmPassword}
+                        onBlur={() => validatePassword()}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        className="border rounded px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
+                        placeholder="••••••••"
+                      />
+                    </div>
+                    {errorMessage && (
+                      <p className="text-destructive text-sm">{errorMessage}</p>
+                    )}
+                    <button
+                      disabled={
+                        isFormSending ||
+                        !oldPassword ||
+                        !newPassword ||
+                        !confirmPassword ||
+                        !isValid
+                      }
+                      type="submit"
+                      className="bg-primary text-primary-foreground rounded px-4 py-2 text-sm font-medium w-fit disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {isFormSending ? "修改中..." : "送出"}
+                    </button>
+                  </form>
+                </div>
               </div>
             </>
           )}
@@ -272,7 +306,7 @@ export default function SettingsPage() {
               {categories.map((c) => (
                 <div
                   key={c.id}
-                  className="flex items-center justify-between px-4 py-3 hover:bg-primary/5"
+                  className="flex items-center justify-between px-4 py-3 hover:bg-primary/5 dark:hover:bg-primary/10"
                 >
                   <div className="flex items-center gap-3">
                     {editingId === c.id ? (
@@ -306,7 +340,7 @@ export default function SettingsPage() {
                       <>
                         <span>{c.name}</span>
                         <span
-                          className={`text-xs px-2 py-0.5 rounded-full ${c.type === "income" ? "bg-green-100 text-green-600" : "bg-red-100 text-red-500"}`}
+                          className={`text-xs px-2 py-0.5 rounded-full ${c.type === "income" ? "bg-green-100 text-green-600 dark:bg-green-950/60 dark:text-green-400" : "bg-red-100 text-red-500 dark:bg-red-950/60 dark:text-red-400"}`}
                         >
                           {c.type === "income" ? "收入" : "支出"}
                         </span>

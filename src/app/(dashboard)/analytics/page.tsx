@@ -35,6 +35,7 @@ import {
   PieTooltip,
   TimePeriod,
 } from "@/lib/chartUtils";
+import { useTheme } from "next-themes";
 dayjs.extend(isoWeek);
 
 // ── 統計卡片 ──────────────────────────────────────────
@@ -72,6 +73,8 @@ export default function AnalyticsPage() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [chartType, setChartType] = useState<ChartType>("bar");
   const [period, setPeriod] = useState<TimePeriod>("month");
+  const { resolvedTheme } = useTheme();
+  const isDark = resolvedTheme === "dark";
 
   useEffect(() => {
     loadData();
@@ -148,21 +151,25 @@ export default function AnalyticsPage() {
               label="總收入"
               value={totalIncome}
               color="text-green-600"
-              bgColor="bg-green-50"
+              bgColor="bg-green-50 dark:bg-green-950/50"
               icon={<CircleDollarSign size={18} className="text-green-500" />}
             />
             <StatCard
               label="總支出"
               value={totalExpense}
               color="text-red-500"
-              bgColor="bg-red-50"
+              bgColor="bg-red-50 dark:bg-red-950/40"
               icon={<ShoppingCart size={18} className="text-red-500" />}
             />
             <StatCard
               label="淨收支"
               value={net}
               color={net >= 0 ? "text-blue-600" : "text-red-500"}
-              bgColor={net >= 0 ? "bg-blue-50" : "bg-red-50"}
+              bgColor={
+                net >= 0
+                  ? "bg-blue-50 dark:bg-blue-950/40"
+                  : "bg-red-50 dark:bg-red-950/40"
+              }
               icon={
                 <Wallet
                   size={18}
@@ -196,7 +203,7 @@ export default function AnalyticsPage() {
                           className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all ${
                             chartType === type
                               ? "bg-primary shadow text-primary-foreground"
-                              : "text-gray-500 hover:text-gray-700"
+                              : "text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
                           }`}
                         >
                           {labels[type]}
@@ -217,7 +224,7 @@ export default function AnalyticsPage() {
                             className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all ${
                               period === p
                                 ? "bg-primary shadow text-primary-foreground"
-                                : "text-gray-500 hover:text-gray-700"
+                                : "text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
                             }`}
                           >
                             {labels[p]}
@@ -234,10 +241,24 @@ export default function AnalyticsPage() {
                     {/* 長條圖：收入 vs 支出 grouped */}
                     {chartType === "bar" ? (
                       <BarChart data={periodData} barGap={4}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                        <XAxis dataKey="label" tick={{ fontSize: 12 }} />
+                        <CartesianGrid
+                          strokeDasharray="3 3"
+                          stroke={
+                            isDark ? "rgba(255,255,255,0.3)" : "rgba(0,0,0,0.3)"
+                          }
+                        />
+                        <XAxis
+                          dataKey="label"
+                          tick={{
+                            fontSize: 12,
+                            fill: isDark ? "#9ca3af" : "#6b7280",
+                          }}
+                        />
                         <YAxis
-                          tick={{ fontSize: 12 }}
+                          tick={{
+                            fontSize: 12,
+                            fill: isDark ? "#9ca3af" : "#6b7280",
+                          }}
                           tickFormatter={(v) => `$${(v / 1000).toFixed(0)}k`}
                         />
                         <Tooltip content={<CustomTooltip />} />
@@ -258,10 +279,24 @@ export default function AnalyticsPage() {
                     ) : chartType === "line" ? (
                       /* 折線圖：每日/週/月 淨額趨勢 */
                       <LineChart data={periodData}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                        <XAxis dataKey="label" tick={{ fontSize: 12 }} />
+                        <CartesianGrid
+                          strokeDasharray="3 3"
+                          stroke={
+                            isDark ? "rgba(255,255,255,0.3)" : "rgba(0,0,0,0.3)"
+                          }
+                        />
+                        <XAxis
+                          dataKey="label"
+                          tick={{
+                            fontSize: 12,
+                            fill: isDark ? "#9ca3af" : "#6b7280",
+                          }}
+                        />
                         <YAxis
-                          tick={{ fontSize: 12 }}
+                          tick={{
+                            fontSize: 12,
+                            fill: isDark ? "#9ca3af" : "#6b7280",
+                          }}
                           tickFormatter={(v) => `$${(v / 1000).toFixed(0)}k`}
                         />
                         <Tooltip content={<CustomTooltip />} />
@@ -322,7 +357,7 @@ export default function AnalyticsPage() {
 
               {/* 分類明細表 */}
               <div className="rounded-xl border shadow-sm p-6">
-                <h2 className="text-base font-semibold text-gray-700 mb-4">
+                <h2 className="text-base font-semibold text-gray-700 dark:text-gray-400 mb-4">
                   支出分類明細
                 </h2>
                 <div className="space-y-3">
@@ -333,14 +368,14 @@ export default function AnalyticsPage() {
                       return (
                         <div key={item.name}>
                           <div className="flex justify-between text-sm mb-1">
-                            <span className="text-gray-700 font-medium">
+                            <span className="text-gray-700 dark:text-gray-200 font-medium">
                               {item.name}
                             </span>
-                            <span className="text-gray-500">
+                            <span className="text-gray-500 dark:text-gray-300">
                               {formatAmount(item.value)}　{pct}%
                             </span>
                           </div>
-                          <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                          <div className="h-2 bg-gray-100 dark:bg-white/10 rounded-full overflow-hidden">
                             <div
                               className="h-full rounded-full transition-all duration-500"
                               style={{

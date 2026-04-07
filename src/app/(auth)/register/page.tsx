@@ -64,7 +64,7 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center">
+    <div className="min-h-screen flex items-start justify-center pt-30">
       <div className="w-full max-w-sm flex flex-col gap-4">
         <div className="sm:hidden text-center">
           <div className="text-5xl mb-2">💰</div>

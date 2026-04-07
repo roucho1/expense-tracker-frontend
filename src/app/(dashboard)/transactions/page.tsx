@@ -197,7 +197,7 @@ export default function TransactionsPage() {
         </div>
         <button
           onClick={() => exportToCSV()}
-          className="border border-primary text-primary rounded px-3 py-2 text-sm flex items-center gap-1 hover:bg-primary/10"
+          className="border border-primary text-primary rounded px-3 py-2 text-sm flex items-center gap-1 hover:bg-primary/10 dark:hover:bg-primary/15"
         >
           <Download size={16} />
           <span className="sm:hidden">匯出</span>
@@ -291,7 +291,7 @@ export default function TransactionsPage() {
           filtered.map((t) => (
             <div
               key={t.id}
-              className="border rounded-lg shadow-sm px-4 py-3 flex items-center justify-between hover:bg-primary/5 transition-colors"
+              className="border rounded-lg shadow-sm px-4 py-3 flex items-center justify-between hover:bg-primary/5 dark:hover:bg-primary/10 transition-colors"
             >
               <div className="flex flex-col gap-0.5">
                 <span className="text-sm font-medium">{t.note}</span>

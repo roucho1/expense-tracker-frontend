@@ -167,7 +167,7 @@ export default function HomePage() {
         ) : (
           <>
             <div className="grid grid-cols-3 gap-4">
-              <div className="border rounded-lg shadow-sm p-4 flex flex-col gap-1 bg-green-50">
+              <div className="border rounded-lg shadow-sm p-4 flex flex-col gap-1 bg-green-50 dark:bg-green-950/50">
                 <div className="flex items-center gap-2">
                   <CircleDollarSign size={18} className="text-green-500" />
                   <span className="text-sm text-muted-foreground">收入</span>
@@ -176,7 +176,7 @@ export default function HomePage() {
                   +{stats.income.toLocaleString()}
                 </span>
               </div>
-              <div className="border rounded-lg shadow-sm p-4 flex flex-col gap-1 bg-red-50">
+              <div className="border rounded-lg shadow-sm p-4 flex flex-col gap-1 bg-red-50 dark:bg-red-950/40">
                 <div className="flex items-center gap-2">
                   <ShoppingCart size={18} className="text-red-500" />
                   <span className="text-sm text-muted-foreground">支出</span>
@@ -186,7 +186,7 @@ export default function HomePage() {
                 </span>
               </div>
               <div
-                className={`border rounded-lg shadow-sm p-4 flex flex-col gap-1 ${stats.balance >= 0 ? "bg-blue-50" : "bg-red-50"}`}
+                className={`border rounded-lg shadow-sm p-4 flex flex-col gap-1 ${stats.balance >= 0 ? "bg-blue-50 dark:bg-blue-950/40" : "bg-red-50 dark:bg-red-950/40"}`}
               >
                 <div className="flex items-center gap-2">
                   <Wallet
@@ -212,7 +212,7 @@ export default function HomePage() {
                 </h3>
               </div>
               {categoryData.length === 0 ? (
-                <div className="text-center text-muted-foreground py-8 text-sm">
+                <div className="text-center text-muted-foreground py-8">
                   📊 本期間沒有支出資料
                 </div>
               ) : (
@@ -228,14 +228,14 @@ export default function HomePage() {
                         return (
                           <div key={item.name}>
                             <div className="flex justify-between text-sm mb-1">
-                              <span className="text-gray-700 font-medium">
+                              <span className="text-gray-700 dark:text-gray-200 font-medium">
                                 {item.name}
                               </span>
-                              <span className="text-gray-500">
+                              <span className="text-gray-500 dark:text-gray-300">
                                 {formatAmount(item.value)}　{pct}%
                               </span>
                             </div>
-                            <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                            <div className="h-2 bg-gray-100 dark:bg-white/10 rounded-full overflow-hidden">
                               <div
                                 className="h-full rounded-full transition-all duration-500"
                                 style={{
@@ -304,7 +304,7 @@ export default function HomePage() {
             recentTransactions.map((t) => (
               <div
                 key={t.id}
-                className="border rounded-lg shadow-sm px-4 py-3 flex items-center justify-between hover:bg-primary/5 transition-colors"
+                className="border rounded-lg shadow-sm px-4 py-3 flex items-center justify-between hover:bg-primary/5 dark:hover:bg-primary/10 transition-colors"
               >
                 <div className="flex flex-col gap-0.5">
                   <span className="text-sm font-medium">{t.note}</span>
@@ -330,13 +330,13 @@ export default function HomePage() {
       <div className="flex gap-3">
         <button
           onClick={() => setQuickAddType("expense")}
-          className="flex-1 border rounded-lg shadow-sm py-3 text-sm font-medium text-red-500 border-red-200 hover:bg-red-50"
+          className="flex-1 border rounded-lg shadow-sm py-3 text-sm font-medium text-red-500 border-red-200 hover:bg-red-50 dark:bg-red-950/20 dark:hover:bg-red-950/40"
         >
           + 新增支出
         </button>
         <button
           onClick={() => setQuickAddType("income")}
-          className="flex-1 border rounded-lg shadow-sm py-3 text-sm font-medium text-green-500 border-green-200 hover:bg-green-50"
+          className="flex-1 border rounded-lg shadow-sm py-3 text-sm font-medium text-green-500 border-green-200 hover:bg-green-50 dark:bg-green-950/20 dark:hover:bg-green-950/40"
         >
           + 新增收入
         </button>
