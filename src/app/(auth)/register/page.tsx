@@ -65,12 +65,12 @@ export default function RegisterPage() {
 
   return (
     <div className="min-h-screen flex items-start justify-center pt-30">
-      <div className="w-full max-w-sm flex flex-col gap-4">
+      <div className="w-full sm:max-w-sm flex flex-col gap-4">
         <div className="sm:hidden text-center">
           <div className="text-5xl mb-2">💰</div>
           <span className="text-xl font-bold">Expense Tracker</span>
         </div>
-        <div className="border rounded-lg shadow-sm p-8 flex flex-col gap-6">
+        <div className="p-8 flex flex-col gap-6 bg-gray-50 dark:bg-white/7 sm:bg-transparent sm:dark:bg-transparent sm:border sm:rounded-lg sm:shadow-sm">
           <div>
             <h1 className="text-2xl font-bold">註冊</h1>
             <p className="text-sm text-muted-foreground mt-1">
