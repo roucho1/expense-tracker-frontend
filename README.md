@@ -73,6 +73,9 @@ npm run dev
 
 線上DEMO網址：https://expense-tracker-frontend-omega-ruddy.vercel.app/
 
+測試帳號：test123@test.com  
+測試密碼：test12345
+
 ### 桌面版(1920\*1080)淺色模式
 
 ![登入頁](https://github.com/user-attachments/assets/2b878ded-c03a-458c-8f27-bd78867713cb)
@@ -82,9 +85,6 @@ npm run dev
 ![設定](https://github.com/user-attachments/assets/cfd3b290-488f-49e2-9ce1-5814eec452f3)
 
 ### 桌面版(1920\*1080)深色模式
-
-測試帳號：test123@test.com  
-測試密碼：test12345
 
 ![首頁](https://github.com/user-attachments/assets/524245f4-3e19-4353-88ea-2de96c422531)
 ![記帳](https://github.com/user-attachments/assets/27af92ba-3cc5-4ee7-9cb5-e37cf7490b21)
