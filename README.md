@@ -24,6 +24,7 @@
 
 - 前端：Next.js，部署於 Vercel
 - 後端：FastAPI，部署於 Render
+- 後端 API：[expense-tracker-backend](https://github.com/roucho1/expense-tracker-backend)
 - 資料庫：PostgreSQL，由 Render 託管
 - 前後端透過 REST API 溝通，JWT 進行身份驗證
 
