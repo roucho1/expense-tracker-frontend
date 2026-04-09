@@ -1,4 +1,4 @@
-# expense-tracker
+# expense-tracker-frontend
 
 使用 Next.js + FastAPI 建立的全端記帳專案，支援收支管理、圖表分析與深淺色模式，並支援 RWD 手機版面。
 
