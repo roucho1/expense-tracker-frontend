@@ -147,7 +147,7 @@ export default function TransactionModal({
             type="submit"
             className="bg-primary text-primary-foreground rounded py-2 text-sm font-medium mt-2"
           >
-            新增
+            {initialData.note ? "編輯" : "新增"}
           </button>
         </form>
       </DialogContent>

@@ -29,7 +29,7 @@ export default function HomeSkeleton() {
                 <Skeleton className="h-4 w-4 rounded-full" /> {/* 圖標位置 */}
                 <Skeleton className="h-4 w-12" /> {/* 文字標籤 */}
               </div>
-              <Skeleton className="h-8 w-24" /> {/* 數字位置 */}
+              <Skeleton className="h-8 max-w-24" /> {/* 數字位置 */}
             </div>
           ))}
         </div>
