@@ -1,6 +1,8 @@
 import { Category } from "@/types/category";
 import { sortByDateAsc, Transaction } from "@/types/transaction";
 import dayjs from "dayjs";
+import isoWeek from "dayjs/plugin/isoWeek";
+dayjs.extend(isoWeek);
 
 // ── 型別 ──────────────────────────────────────────────
 export type ChartType = "bar" | "line" | "pie";
