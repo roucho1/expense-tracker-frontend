@@ -58,7 +58,7 @@ export default function CategoryManager() {
   }
   async function updateCategory(id: number, data: CategoryForm) {
     try {
-      await await categoryApi.update(id, data);
+      await categoryApi.update(id, data);
       toast.success("編輯成功", { duration: 3000 });
       setCategories((prev) =>
         prev.map((c) =>
