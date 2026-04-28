@@ -14,11 +14,12 @@
 - Next.js
 - Typescript
 - Tailwind CSS
-- Recharts（圖表）
-- Zustand（登入狀態管理）
-- shadcn/ui（Dialog、AlertDialog、Toast）
-- next-themes（深淺色模式切換）
 - axios（API 請求）
+- Zustand（登入狀態管理）
+- Recharts（圖表）
+- shadcn/ui（Dialog、AlertDialog）
+- next-themes（深淺色模式切換）
+- sonner（Toaster）
 
 ## 架構說明
 
